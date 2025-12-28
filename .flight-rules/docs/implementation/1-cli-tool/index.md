@@ -37,9 +37,9 @@ flowchart TD
 
 | ID | Name | Description | Status |
 |----|------|-------------|--------|
-| 1.1 | [Package Setup](1.1-package-setup.md) | npm package config, TypeScript, build pipeline | 🔵 Planned |
-| 1.2 | [CLI Commands](1.2-cli-commands.md) | Argument parsing, init command, user prompts | 🔵 Planned |
-| 1.3 | [Scaffolding Engine](1.3-scaffolding-engine.md) | CLI orchestration, integration templates, configuration | 🔵 Planned |
+| 1.1 | [Package Setup](1.1-package-setup.md) | npm package config, TypeScript, build pipeline | ✅ Complete |
+| 1.2 | [CLI Commands](1.2-cli-commands.md) | Argument parsing, init command, user prompts | 🟡 In Progress |
+| 1.3 | [Scaffolding Engine](1.3-scaffolding-engine.md) | CLI orchestration, integration templates, configuration | 🟡 In Progress |
 
 ## Key Decisions
 

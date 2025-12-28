@@ -9,19 +9,24 @@ r9stack uses a **script-first approach**: execute official CLI tools (TanStack S
 ### Initialization Order (V1)
 
 ```
-1. TanStack Start CLI  →  Base React project with routing
-2. shadcn/ui CLI       →  Tailwind CSS + component library  
-3. Convex CLI          →  Backend and database layer
-4. r9stack templates   →  Auth (WorkOS) integration
-5. Post-scaffold       →  Wire everything together
+1. TanStack Start CLI with add-ons  →  Complete project scaffold
+   - Base React project with routing
+   - Tailwind CSS (--tailwind)
+   - shadcn/ui (--add-ons shadcn)
+   - Convex backend (--add-ons convex)
+   - WorkOS auth (--add-ons workos)
+2. r9stack templates                →  App shell, protected routes
+3. Post-scaffold                    →  Configuration, setup instructions
 ```
 
 > **V1 Scope:** Payments (Stripe) integration is deferred to post-V1.
 
+> **Simplified Architecture:** TanStack Start's add-on system handles most integrations, reducing CLI orchestration complexity.
+
 ## Implementation Areas
 
 1. **CLI Tool** – The r9stack npm package, CLI orchestration, and scaffolding engine
-   - Status: 🔵 Planned
+   - Status: 🟡 In Progress
    - See: [`1-cli-tool/`](1-cli-tool/)
 
 2. **Project Scaffold** – Target state specification of a generated r9stack project
@@ -58,11 +63,13 @@ flowchart LR
 | Component | Source | Notes | Version |
 |-----------|--------|-------|---------|
 | React + File-based Routing | TanStack Start CLI | `npm create @tanstack/start@latest` | V1 |
-| Tailwind CSS + UI Components | shadcn/ui CLI | `npx shadcn@latest init` | V1 |
-| Backend + Database | Convex CLI | `npx convex init` | V1 |
-| Authentication | r9stack templates | WorkOS + Convex JWT integration | V1 |
+| Tailwind CSS + UI Components | TanStack Start CLI | `--tailwind --add-ons shadcn` | V1 |
+| Backend + Database | TanStack Start CLI | `--add-ons convex` | V1 |
+| Authentication | TanStack Start CLI | `--add-ons workos` | V1 |
 | App Shell + Navigation | r9stack templates | Header, user menu, protected routes | V1 |
 | Payments | r9stack templates | Stripe + Convex integration | Post-V1 |
+
+> **Key Discovery (2025-12-27):** TanStack Start has built-in add-ons for shadcn, Convex, and WorkOS. This eliminates the need to orchestrate multiple CLIs—we pass flags to a single TanStack Start invocation.
 
 ## How to Use This
 

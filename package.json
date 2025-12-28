@@ -1,0 +1,44 @@
+{
+  "name": "r9stack",
+  "version": "0.1.0",
+  "description": "CLI tool that scaffolds opinionated SaaS projects with a fully functional walking skeleton",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "r9stack": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "cli",
+    "scaffold",
+    "tanstack",
+    "convex",
+    "saas",
+    "starter",
+    "boilerplate"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ryanpacker/r9stack"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^7.2.1",
+    "commander": "^13.0.0",
+    "execa": "^9.5.2",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  }
+}
+

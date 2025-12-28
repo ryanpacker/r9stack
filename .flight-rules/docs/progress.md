@@ -6,6 +6,15 @@ A running log of sessions and milestones.
 
 ## Session Logs
 
+### 2025-12-27 19:15
+
+- Built foundational r9stack CLI npm package
+- Implemented `init` command with TanStack Start scaffolding
+- Discovered TanStack Start has built-in add-ons for shadcn, Convex, WorkOS (simplifies architecture)
+- Set up local development workflow with npm link
+- Updated README with current status and local development instructions
+- See: [session_logs/20251227_1915_session.md](session_logs/20251227_1915_session.md)
+
 ### 2025-12-27 14:30
 
 - Pivoted r9stack from "clone a repo" to CLI-based scaffolding tool
