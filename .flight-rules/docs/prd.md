@@ -2,16 +2,16 @@
 
 ## Overview
 
-r9stack is an opinionated SaaS boilerplate that automates the tedious setup required for building modern SaaS applications. It provides a fully functional "walking skeleton"—a complete frontend, backend, and database stack with auth and payments pre-integrated—that developers can clone and immediately start building on.
+r9stack is a CLI tool that scaffolds opinionated SaaS projects with a fully functional "walking skeleton"—a complete frontend, backend, and database stack with auth and payments pre-integrated. Developers run a single command and get a production-ready foundation to immediately start building on.
 
 The project addresses a key friction point in agentic coding workflows: while AI has dramatically accelerated feature development, initial project setup—configuring the frontend framework, wiring up the backend and database, integrating auth providers, setting up payments—remains tedious and error-prone.
 
 ## Goals
 
-1. **Zero-to-running in minutes** – Clone the repo and have a working full-stack app (frontend, backend, database, auth, payments) immediately functional
-2. **Production-ready foundations** – The skeleton should follow best practices for security, performance, and maintainability across all layers of the stack
+1. **Zero-to-running in minutes** – Run `r9stack init` and have a scaffolded full-stack app (frontend, backend, database, auth, payments) ready to configure and run
+2. **Production-ready foundations** – The generated skeleton follows best practices for security, performance, and maintainability across all layers of the stack
 3. **Agentic-coding friendly** – Structure and conventions that AI coding assistants can easily understand and extend
-4. **Clear upgrade path** – Users can pull improvements from r9stack without breaking their customizations
+4. **Clear setup guidance** – For steps the CLI cannot automate (creating third-party accounts, obtaining API keys), provide clear, concise instructions with direct links to the relevant pages
 
 ## Non-Goals
 
@@ -20,7 +20,17 @@ The project addresses a key friction point in agentic coding workflows: while AI
 - **Multi-tenancy** – Not included in initial scope
 - **Custom domain-specific features** – r9stack provides infrastructure, not business logic
 
-## Tech Stack (v1)
+## Tech Stack
+
+### CLI Tool
+
+| Component | Technology |
+|-----------|------------|
+| Language | TypeScript |
+| Runtime | Node.js |
+| Distribution | npm package |
+
+### Generated Project
 
 | Layer | Technology |
 |-------|------------|
@@ -32,13 +42,24 @@ The project addresses a key friction point in agentic coding workflows: while AI
 | Styling | shadcn/ui (Tailwind CSS) |
 | Hosting | TBD |
 
+## CLI Commands (v1)
+
+| Command | Description |
+|---------|-------------|
+| `r9stack init` | Scaffold a new project in the current directory |
+
+Future versions may add commands for upgrades, component additions, etc.
+
 ## User Stories
 
-- **As a solo developer**, I want to clone a repo and have a complete full-stack app (frontend, backend, database, auth, payments) ready to extend so that I can focus on building my product's unique features
+- **As a solo developer**, I want to run a single command to scaffold a complete full-stack project (frontend, backend, database, auth, payments) so that I can focus on building my product's unique features
 - **As an AI-assisted developer**, I want clear project structure and conventions across the frontend, backend, and API layers so that my coding agent can understand and extend the codebase effectively
 - **As a bootstrapper**, I want production-ready infrastructure with all the major technology decisions already made so that I don't have to revisit foundational decisions later
+- **As a new user**, I want clear instructions with links for any manual setup steps (creating WorkOS account, Convex project, Stripe keys) so that I can complete the full setup without searching for documentation
 
-## Walking Skeleton Features (v1)
+## Generated Project Features (v1)
+
+The `r9stack init` command generates a project with:
 
 - [ ] TanStack Start frontend with routing and basic application shell
 - [ ] Convex backend with API patterns established
@@ -47,16 +68,18 @@ The project addresses a key friction point in agentic coding workflows: while AI
 - [ ] User authentication via WorkOS + Convex integration
 - [ ] Stripe payment integration (subscription-ready)
 - [ ] Development environment setup
+- [ ] Setup instructions for third-party services (WorkOS, Convex, Stripe)
 
 ## Constraints
 
 - **Solo maintainer** – Scope must remain achievable for one person
 - **Opinionated stack** – Reduces flexibility but ensures cohesion and maintainability
 - **Dependency on third-party services** – WorkOS, Stripe, Convex all have their own limitations and pricing
+- **Manual setup required** – The CLI cannot create accounts on behalf of users; clear guidance must bridge this gap
 
 ## Success Criteria
 
-1. A new user can clone the repo and have a running full-stack app in under 10 minutes
-2. The codebase is structured such that Claude Code or similar agents can effectively navigate and extend it
-3. The user successfully uses r9stack as the foundation for at least one production SaaS application
-
+1. A new user can run `r9stack init` and have a scaffolded full-stack project in under 5 minutes
+2. The CLI provides clear, actionable instructions (with links) for all manual setup steps
+3. The generated codebase is structured such that Claude Code or similar agents can effectively navigate and extend it
+4. The user successfully uses an r9stack-generated project as the foundation for at least one production SaaS application
