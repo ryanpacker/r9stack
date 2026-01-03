@@ -1,8 +1,9 @@
 # Session Log: YYYY-MM-DD HH:MM
 
 <!-- 
-Use this template for documenting coding sessions.
-Copy to docs/session_logs/YYYYMMDD_HHMM_session.md
+Template for coding session documentation.
+Agents create new session logs in docs/session_logs/ following this structure.
+Naming convention: YYYYMMDD_HHMM_session.md
 -->
 
 ## Session Goals

@@ -10,7 +10,7 @@ Prompts to help create and review implementation plans.
 
 ## Usage
 
-Copy the prompt into your AI assistant, specifying which part of the implementation plan to review. The AI will read the relevant docs from `.flight-rules/docs/implementation/` and provide structured feedback.
+Copy the prompt into your AI assistant, specifying which part of the implementation plan to review. The AI will read the relevant docs from `docs/implementation/` and provide structured feedback.
 
 ## Workflow
 

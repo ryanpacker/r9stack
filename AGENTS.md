@@ -6,17 +6,18 @@ This file is placed at the project root as `AGENTS.md` for Cursor compatibility.
 
 **This project uses Flight Rules.**
 
-All agent guidelines, project documentation, and workflows live in `.flight-rules/`.
+Agent guidelines and workflows live in `.flight-rules/`. Project documentation lives in `docs/`.
 
 ## Quick Reference
 
 | What | Where |
 |------|-------|
 | Agent Guidelines | `.flight-rules/AGENTS.md` |
-| PRD | `.flight-rules/docs/prd.md` |
-| Implementation Specs | `.flight-rules/docs/implementation/` |
-| Progress Log | `.flight-rules/docs/progress.md` |
-| Session Commands | `.flight-rules/commands/` |
+| PRD | `docs/prd.md` |
+| Implementation Specs | `docs/implementation/` |
+| Progress Log | `docs/progress.md` |
+| Tech Stack | `docs/tech-stack.md` |
+| Session Commands | `.cursor/commands/` (as slash commands) |
 
 ## For Agents
 
@@ -26,4 +27,4 @@ Please read `.flight-rules/AGENTS.md` for complete guidelines on:
 - Coding sessions
 - How to work with this system
 
-When the user says "start coding session" or "end coding session", follow the instructions in `.flight-rules/commands/`.
+Use the `/start-coding-session` and `/end-coding-session` slash commands.

@@ -1,6 +1,6 @@
 # Flight Rules – Agent Guidelines
 
-flight_rules_version: 0.2.0
+flight_rules_version: 0.5.1
 
 This file defines how agents (Claude Code, Cursor, etc.) should work on software projects using the Flight Rules system.
 
@@ -18,14 +18,14 @@ The goal: any agent (or human) should be able to understand the project's lifecy
 
 Assume the following lifecycle for projects:
 
-1. **Idea & PRD** – captured in `.flight-rules/docs/prd.md`
-2. **Implementation specs (iterative)** – The spec system (Areas → Task Groups → Tasks) lives under `.flight-rules/docs/implementation/`. Usually, Areas and Task Groups are drafted first, but individual Tasks are typically fleshed out incrementally, often at the start of each coding session as part of setting the plan for that session.
+1. **Idea & PRD** – captured in `docs/prd.md`
+2. **Implementation specs (iterative)** – The spec system (Areas → Task Groups → Tasks) lives under `docs/implementation/`. Usually, Areas and Task Groups are drafted first, but individual Tasks are typically fleshed out incrementally, often at the start of each coding session as part of setting the plan for that session.
 
 3. **Coding sessions** – At the beginning of a session, identify or refine the relevant Tasks within a Task Group, make a clear plan for implementation, and then execute against that plan.
    - Each session should produce:
-     - Detailed documentation in `.flight-rules/docs/session_logs/`
-     - A brief summary/log entry in `.flight-rules/docs/progress.md` also links to the details in `session_logs`.
-4. **Critical learnings** – promoted into `.flight-rules/docs/critical-learnings.md`
+     - Detailed documentation in `docs/session_logs/`
+     - A brief summary/log entry in `docs/progress.md` also links to the details in `session_logs`.
+4. **Critical learnings** – promoted into `docs/critical-learnings.md`
 5. **Commits & releases** – Git history + tags/releases reflect implementation of the specs
 
 Agents should prefer working *with* this system rather than inventing their own structure.
@@ -34,66 +34,52 @@ Agents should prefer working *with* this system rather than inventing their own 
 
 ## 2. Project structure
 
-This project contains a `.flight-rules/` directory with the following structure:
+Projects using Flight Rules have two key locations:
 
-### doc-templates/
+### `.flight-rules/` – Framework files
 
-Templates for project documentation. These are Flight Rules framework files that can be replaced on upgrade.
+The `.flight-rules/` directory contains Flight Rules framework files. These can be replaced on upgrade.
 
-- `.flight-rules/doc-templates/prd.md` – Template for product requirements
-- `.flight-rules/doc-templates/progress.md` – Template for progress log
-- `.flight-rules/doc-templates/critical-learnings.md` – Template for learnings
-- `.flight-rules/doc-templates/session-log.md` – Template for session logs
-- `.flight-rules/doc-templates/implementation/overview.md` – Template for implementation overview
+- `.flight-rules/AGENTS.md` – This file; agent guidelines
+- `.flight-rules/doc-templates/` – Templates for creating project docs
+- `.flight-rules/commands/` – Workflow command files (start/end coding session)
+- `.flight-rules/prompts/` – Reusable prompt templates
 
-When helping users set up a new project, copy these templates to `docs/`.
+### `docs/` – Your project documentation
 
-### docs/
+The `docs/` directory at the project root contains your project content. These files are created by `flight-rules init` and new templates are added during `flight-rules upgrade`.
 
-**This directory contains user-owned project content. Flight Rules upgrades never touch this directory.**
-
-- `.flight-rules/docs/prd.md`  
+- `docs/prd.md`  
   - Product requirements and high-level goals.
   - Agents should read this when clarifying "what are we building and why?"
-  - Created by copying from `doc-templates/prd.md`
 
-- `.flight-rules/docs/implementation/`  
+- `docs/implementation/`  
   - Home of the implementation spec hierarchy (see next section).
   - The **spec is the single source of truth** for what should exist in the codebase and why.
-  - Start by copying `doc-templates/implementation/overview.md` here.
 
-- `.flight-rules/docs/progress.md`  
+- `docs/progress.md`  
   - A running high-level log of sessions and milestones.
   - Each session gets a short entry + link to its detailed log file.
-  - Created by copying from `doc-templates/progress.md`
 
-- `.flight-rules/docs/critical-learnings.md`  
+- `docs/critical-learnings.md`  
   - A curated list of reusable insights, patterns, and "never again" notes.
   - Agents should propose additions when a session reveals something important or reusable.
-  - Created by copying from `doc-templates/critical-learnings.md`
 
-- `.flight-rules/docs/session_logs/`  
+- `docs/tech-stack.md`  
+  - Documents the project's technical environment (testing framework, runtime, key dependencies).
+  - Agents should read this when performing tech-dependent tasks like creating tests.
+  - Use `/test.assess-current` to auto-populate this file based on the project's setup.
+
+- `docs/session_logs/`  
   - Session documentation created during coding sessions.
   - Contains plans, summaries, and learnings from each session.
-  - Use `doc-templates/session-log.md` as a template for new logs.
-
-### commands/
-
-- `.flight-rules/commands/`  
-  - Command files that agents execute when the user invokes specific workflows.
-  - Examples: `start-coding-session.md`, `end-coding-session.md`
-
-### prompts/
-
-- `.flight-rules/prompts/`  
-  - Reusable prompt templates for common tasks.
-  - Store frequently-used prompts here so they can be versioned and shared.
+  - Agents create new session logs following the structure in `.flight-rules/doc-templates/session-log.md`.
 
 ---
 
 ## 3. Implementation spec system (Areas, Task Groups, Tasks)
 
-Implementation specs live in `.flight-rules/docs/implementation/` and follow a 3-level hierarchy:
+Implementation specs live in `docs/implementation/` and follow a 3-level hierarchy:
 
 | Level | Name | Example | Description |
 |-------|------|---------|-------------|
@@ -103,8 +89,8 @@ Implementation specs live in `.flight-rules/docs/implementation/` and follow a 3
 
 ### Areas (Level 1)
 
-- Listed in `.flight-rules/docs/implementation/overview.md`
-- Each Area is a directory: `.flight-rules/docs/implementation/{N}-{kebab-topic}/`
+- Listed in `docs/implementation/overview.md`
+- Each Area is a directory: `docs/implementation/{N}-{kebab-topic}/`
 - Contains an `index.md` with overview, goals, and architecture context
 - Examples: "Foundation & Shell", "Core Domain Models", "API Integration"
 
@@ -164,8 +150,8 @@ Agents **must not** initiate these workflows on their own; they are only run whe
 When the user triggers a start session command, follow the process defined in `.flight-rules/commands/start-coding-session.md`. The generic behavior:
 
 1. **Review project context**
-   - Read `.flight-rules/docs/prd.md`, `.flight-rules/docs/implementation/overview.md`, relevant spec files, and `.flight-rules/docs/progress.md`.
-   - Read the most recent session log in `.flight-rules/docs/session_logs/` if present.
+   - Read `docs/prd.md`, `docs/implementation/overview.md`, relevant spec files, and `docs/progress.md`.
+   - Read the most recent session log in `docs/session_logs/` if present.
    - Scan code as needed to understand current state.
 
 2. **Establish session goals**
@@ -180,7 +166,7 @@ When the user triggers a start session command, follow the process defined in `.
      - Potential challenges and mitigations
 
 4. **Document the session plan**
-   - Create a session log in `.flight-rules/docs/session_logs/` using the template at `.flight-rules/doc-templates/session-log.md`.
+   - Create a session log in `docs/session_logs/` using the template at `.flight-rules/doc-templates/session-log.md`.
    - Reference relevant Task Group and Task IDs.
 
 5. **Confirm before coding**
@@ -206,18 +192,18 @@ When the user triggers an end session command, follow the process in `.flight-ru
    - Present the summary to the user for edits/approval.
 
 3. **Update the session log**
-   - Update the session log in `.flight-rules/docs/session_logs/` with the summary.
+   - Update the session log in `docs/session_logs/` with the summary.
    - Link to relevant Task Groups, Tasks, and code areas.
 
 4. **Update progress**
-   - Append a short entry to `.flight-rules/docs/progress.md`:
+   - Append a short entry to `docs/progress.md`:
      - Date/time
      - 2–4 bullet summary
      - Link to the session log file.
 
 5. **Promote critical learnings**  
    - Scan the session details for reusable insights or "this will matter again" items.
-   - Propose additions to `.flight-rules/docs/critical-learnings.md` and update that file when the user approves.
+   - Propose additions to `docs/critical-learnings.md` and update that file when the user approves.
 
 6. **Offer to commit**
    - Ask if the user wants to commit now.
@@ -248,7 +234,7 @@ When working in a project that uses this system:
 1. Read this `.flight-rules/AGENTS.md` file.
 2. Look for project-specific overrides or additions in:
    - `AGENTS.local.md` (if present at project root)
-   - Additional docs under `.flight-rules/docs/` (e.g., `architecture.md`, project-specific guides)
+   - Additional docs under `docs/` (e.g., `architecture.md`, project-specific guides)
 3. Treat project-specific content as authoritative where it narrows or extends these global rules.
 
 ---
@@ -259,4 +245,3 @@ If you are an agent in this project, your default behavior should be:
 2. Use the implementation spec as the single source of truth.
 3. Use start/end coding session workflows when the user explicitly invokes them.
 4. Help keep PRD, specs, progress, and learnings clean, accurate, and up-to-date.
-

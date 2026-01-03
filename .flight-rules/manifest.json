@@ -1,0 +1,8 @@
+{
+  "version": "0.5.1",
+  "deployedAt": "2026-01-03T03:02:43.523Z",
+  "deployedBy": {
+    "cli": "0.5.1",
+    "command": "upgrade"
+  }
+}

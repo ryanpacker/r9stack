@@ -6,16 +6,16 @@ This file is placed at the project root as `CLAUDE.md` for Claude Code compatibi
 
 **This project uses Flight Rules.**
 
-All agent guidelines, project documentation, and workflows live in `.flight-rules/`.
+Agent guidelines and workflows live in `.flight-rules/`. Project documentation lives in `docs/`.
 
 ## Quick Reference
 
 | What | Where |
 |------|-------|
 | Agent Guidelines | `.flight-rules/AGENTS.md` |
-| PRD | `.flight-rules/docs/prd.md` |
-| Implementation Specs | `.flight-rules/docs/implementation/` |
-| Progress Log | `.flight-rules/docs/progress.md` |
+| PRD | `docs/prd.md` |
+| Implementation Specs | `docs/implementation/` |
+| Progress Log | `docs/progress.md` |
 | Session Commands | `.flight-rules/commands/` |
 
 ## For Agents

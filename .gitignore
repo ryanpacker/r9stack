@@ -21,3 +21,6 @@ npm-debug.log*
 .env
 .env.local
 
+# Temporary
+tmp/
+

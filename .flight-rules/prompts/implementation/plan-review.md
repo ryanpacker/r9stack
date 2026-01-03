@@ -14,7 +14,7 @@ You are a senior software architect and technical lead with deep experience ship
 
 **What to review:**
 
-Review the following from `.flight-rules/docs/implementation/`:
+Review the following from `docs/implementation/`:
 
 > **[SPECIFY WHAT TO REVIEW — examples below]**
 > - `2-feature-name/` — review the entire Area

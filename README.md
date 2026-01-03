@@ -1,6 +1,10 @@
-# r9stack
+<p align="center">
+  <img src="assets/logo/r9stack-logo-clear.png" alt="r9stack" width="200" />
+</p>
 
-A CLI tool that scaffolds opinionated SaaS projects with a fully functional walking skeleton—a complete frontend, backend, and database stack with auth pre-integrated.
+<p align="center">
+  A CLI that scaffolds opinionated SaaS projects with a fully functional walking skeleton—a complete frontend, backend, and database stack with auth pre-integrated.
+</p>
 
 ## Status
 
