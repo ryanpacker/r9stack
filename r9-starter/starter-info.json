@@ -1,0 +1,39 @@
+{
+  "id": "r9stack",
+  "name": "r9stack",
+  "version": "0.1.0",
+  "description": "A walking skeleton for building modern web applications with TanStack Start, Convex, WorkOS, and shadcn/ui",
+  "author": "Ryan Packer",
+  "license": "MIT",
+  "link": "https://github.com/ryanpacker/r9stack",
+  "shadcnComponents": [],
+  "framework": "react-cra",
+  "mode": "file-router",
+  "routes": [],
+  "warning": "",
+  "type": "starter",
+  "packageAdditions": {
+    "dependencies": {
+      "@fontsource-variable/inter": "^5.2.8",
+      "@workos-inc/node": "^7.79.3",
+      "class-variance-authority": "^0.7.1",
+      "clsx": "^2.1.1",
+      "convex": "^1.31.2",
+      "iron-session": "^8.0.4",
+      "radix-ui": "^1.4.3",
+      "shadcn": "^3.6.2",
+      "tailwind-merge": "^3.4.0"
+    },
+    "devDependencies": {
+      "png-to-ico": "^3.0.1",
+      "tw-animate-css": "^1.4.0"
+    }
+  },
+  "dependsOn": [
+    "start",
+    "eslint",
+    "nitro"
+  ],
+  "typescript": true,
+  "tailwind": true
+}
