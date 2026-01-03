@@ -6,6 +6,18 @@ A running log of sessions and milestones.
 
 ## Session Logs
 
+### 2026-01-02
+
+- Incorporated learnings from r9teststack sandbox into r9stack documentation
+- Updated README with accurate status table, version matrix, and target output structure
+- Updated PRD: removed Stripe from V1, added iron-session, clarified `/app/*` route pattern
+- Updated implementation overview with command-first approach (TanStack add-ons primary)
+- Updated scaffolding engine spec with single-command approach and gap analysis plan
+- Updated frontend foundation spec with validated file structure and component list
+- Updated auth integration spec with iron-session patterns and server function examples
+- Added 10+ critical learnings (Convex reserved names, SSR-safe patterns, shadcn flags, etc.)
+- Clarified that r9teststack blueprint documents target output; CLI will use add-ons where possible
+
 ### 2025-12-27 19:15
 
 - Built foundational r9stack CLI npm package
