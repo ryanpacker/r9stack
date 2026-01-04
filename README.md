@@ -13,9 +13,12 @@
 | Feature | Status |
 |---------|--------|
 | TanStack Start scaffold | ✅ Working |
+| Starter-based architecture | 🟡 In Progress |
 | shadcn/ui integration | 🟡 In Progress |
 | Convex backend | 🟡 In Progress |
 | WorkOS auth | 🟡 In Progress |
+| GitHub repo creation | 📋 Planned |
+| Vercel deployment | 📋 Planned |
 | Stripe payments | 📋 Post-V1 |
 
 ## Why r9stack?
@@ -23,6 +26,14 @@
 Agentic coding has dramatically accelerated feature development, but initial project setup—configuring the frontend framework, wiring up the backend and database, integrating auth providers—remains tedious and error-prone.
 
 r9stack eliminates this friction. Run a single command and have a scaffolded full-stack project in minutes.
+
+## Architecture
+
+r9stack uses TanStack Start's [starter system](docs/tanstack-start-starter-system.md) to create projects:
+
+1. **CLI invokes TanStack Start** with a `--starter` flag pointing to a hosted `starter.json`
+2. **TanStack Start creates the project** and applies r9stack customizations
+3. **CLI guides post-creation setup** for Convex, WorkOS, and optional GitHub/Vercel integration
 
 ## Tech Stack (V1 Target)
 
@@ -135,6 +146,30 @@ After scaffolding, you'll need to:
 1. **Set up WorkOS** — Create account at https://workos.com, configure redirect URI
 2. **Set up Convex** — Run `npx convex dev` to create project and authenticate
 3. **Add environment variables** — Copy `.env.example` to `.env.local` and fill in credentials
+
+## Project Structure
+
+```
+r9stack/
+├── src/                    # CLI source code
+├── starters/
+│   └── standard/           # r9-starter-standard source
+├── tests/
+│   ├── e2e/               # End-to-end tests
+│   └── output/            # Test output (gitignored)
+├── docs/
+│   ├── prd.md             # Product requirements
+│   ├── implementation/    # Implementation specs
+│   └── ...
+└── dist/                  # Compiled CLI
+```
+
+## Documentation
+
+- [Product Requirements](docs/prd.md)
+- [TanStack Starter System](docs/tanstack-start-starter-system.md)
+- [Starter Development Guide](docs/starter-development.md)
+- [Tech Stack](docs/tech-stack.md)
 
 ## License
 

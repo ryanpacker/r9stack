@@ -12,14 +12,39 @@ The project addresses a key friction point in agentic coding workflows: while AI
 2. **Production-ready foundations** – The generated skeleton follows best practices for security, performance, and maintainability across all layers of the stack
 3. **Agentic-coding friendly** – Structure and conventions that AI coding assistants can easily understand and extend
 4. **Clear setup guidance** – For steps the CLI cannot automate (creating third-party accounts, obtaining API keys), provide clear, concise instructions with direct links to the relevant pages
+5. **Optional deployment integration** – Offer to create GitHub repositories and deploy to Vercel for users who want a complete CI/CD pipeline from the start
 
 ## Non-Goals
 
 - **Framework flexibility (v1)** – No choosing between Next.js vs TanStack Start; the stack is opinionated
-- **CI/CD pipeline (v1)** – Deployment automation is planned for a future version
+- **TanStack Start option configurability (v1)** – Options like package manager, git initialization are not exposed; sensible defaults are used (documented for future versions)
 - **Multi-tenancy** – Not included in initial scope
 - **Payments (v1)** – Stripe integration deferred to post-V1
 - **Custom domain-specific features** – r9stack provides infrastructure, not business logic
+
+## Architecture
+
+### Starter-Based Project Creation
+
+r9stack leverages TanStack Start's starter system to create projects. This approach:
+
+1. **CLI invokes TanStack Start** with a `--starter` flag pointing to a hosted `starter.json`
+2. **TanStack Start creates the base project** and applies r9stack customizations (files, dependencies, deletions)
+3. **CLI performs post-creation steps** that the starter system cannot handle (interactive prompts, external service setup)
+
+### Starter Organization
+
+Starters live in the `/starters/` directory of the r9stack repository:
+
+| Directory | JSON ID | Hosted URL | Description |
+|-----------|---------|------------|-------------|
+| `/starters/standard/` | `r9-starter-standard` | `https://r9stack.dev/starters/standard.json` | Full-featured starter with auth, database, UI |
+
+### Website Integration
+
+The r9stack.dev website (separate private repository) hosts:
+- Compiled `starter.json` files at `/starters/*.json`
+- Documentation and marketing content
 
 ## Tech Stack
 
@@ -46,35 +71,29 @@ The project addresses a key friction point in agentic coding workflows: while AI
 
 | Command | Description |
 |---------|-------------|
-| `r9stack init` | Scaffold a new project in the current directory |
-
-Future versions may add commands for upgrades, component additions, etc.
+| `r9stack init [project-name]` | Scaffold a new project |
 
 ## User Stories
 
-- **As a solo developer**, I want to run a single command to scaffold a complete full-stack project (frontend, backend, database, auth) so that I can focus on building my product's unique features
-- **As an AI-assisted developer**, I want clear project structure and conventions across the frontend, backend, and API layers so that my coding agent can understand and extend the codebase effectively
-- **As a bootstrapper**, I want production-ready infrastructure with all the major technology decisions already made so that I don't have to revisit foundational decisions later
-- **As a new user**, I want clear instructions with links for any manual setup steps (creating WorkOS account, Convex project) so that I can complete the full setup without searching for documentation
+- **As a solo developer**, I want to run a single command to scaffold a complete full-stack project so that I can focus on building my product's unique features
+- **As an AI-assisted developer**, I want clear project structure and conventions so that my coding agent can understand and extend the codebase effectively
+- **As a bootstrapper**, I want production-ready infrastructure with all the major technology decisions already made
+- **As a new user**, I want clear instructions with links for any manual setup steps
+- **As a developer who uses GitHub**, I want the option to automatically create a GitHub repository for my new project
+- **As a developer deploying to Vercel**, I want the option to automatically set up Vercel hosting
 
 ## Generated Project Features (v1)
 
-The `r9stack init` command generates a project with:
-
 - [x] TanStack Start frontend with SSR, file-based routing
 - [ ] Convex backend with schema and example functions
-- [ ] Convex database configured and connected
 - [ ] shadcn/ui component library with Tailwind CSS 4
 - [ ] User authentication via WorkOS AuthKit
-- [ ] Session management with iron-session (encrypted cookies)
+- [ ] Session management with iron-session
 - [ ] Application shell with collapsible sidebar
 - [ ] Protected routes pattern (`/app/*` authenticated, `/` public)
 - [ ] Development environment setup with `.env.example`
-- [ ] Setup instructions for third-party services (WorkOS, Convex)
 
 ## Route Structure
-
-The generated project follows this route pattern:
 
 | Route | Purpose | Auth Required |
 |-------|---------|---------------|
@@ -84,19 +103,23 @@ The generated project follows this route pattern:
 | `/auth/sign-out` | Clears session, redirects home | No |
 | `/app/*` | Protected application routes | Yes |
 
-The `/app/route.tsx` file contains the auth guard that redirects unauthenticated users.
-
 ## Constraints
 
 - **Solo maintainer** – Scope must remain achievable for one person
-- **Opinionated stack** – Reduces flexibility but ensures cohesion and maintainability
-- **Dependency on third-party services** – WorkOS, Convex have their own limitations and pricing
-- **Manual setup required** – The CLI cannot create accounts on behalf of users; clear guidance must bridge this gap
-- **Interactive Convex setup** – `npx convex dev` requires user interaction (browser auth)
+- **Opinionated stack** – Reduces flexibility but ensures cohesion
+- **Dependency on third-party services** – WorkOS, Convex have their own limitations
+- **Manual setup required** – CLI cannot create accounts on behalf of users
+- **Starter URL requirement** – TanStack Start's `--starter` flag requires HTTP/HTTPS URL
 
 ## Success Criteria
 
-1. A new user can run `r9stack init` and have a scaffolded full-stack project in under 5 minutes
-2. The CLI provides clear, actionable instructions (with links) for all manual setup steps
-3. The generated codebase is structured such that Claude Code or similar agents can effectively navigate and extend it
-4. The user successfully uses an r9stack-generated project as the foundation for at least one production SaaS application
+1. New user can run `r9stack init` and have a scaffolded project in under 5 minutes
+2. CLI provides clear, actionable instructions for all manual setup steps
+3. Generated codebase works well with AI coding assistants
+4. Optional GitHub/Vercel integrations work seamlessly
+
+## Future Considerations (v2+)
+
+- Package manager selection (npm, pnpm, yarn, bun)
+- Multiple starter templates (minimal, enterprise)
+- Upgrade command for existing projects

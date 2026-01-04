@@ -1,0 +1,1 @@
+The name of this project: r9stack, should always be lower-cased. If you find instances where a capital R or capital S is used in the name r9stack, you should alert the user and ask if you can fix it.

@@ -1,100 +1,116 @@
 # Tech Stack
 
-This document describes the technical environment for this project. It serves as a reference for humans and agents when performing tech-dependent tasks.
+This document describes the technical environment for the r9stack CLI project.
+
+---
+
+## CLI Technology
+
+| Component | Technology | Version |
+|-----------|------------|---------|
+| Language | TypeScript | 5.x |
+| Runtime | Node.js | >=18.0.0 |
+| Build | tsc (TypeScript compiler) | — |
+| Package Manager | npm | — |
+
+### Key Dependencies
+
+| Package | Purpose |
+|---------|---------|
+| commander | CLI argument parsing |
+| @inquirer/prompts | Interactive prompts |
+| execa | Process execution |
+| picocolors | Terminal colors |
+
+---
+
+## Starter Compilation
+
+Starters are compiled using TanStack Start's built-in starter system:
+
+```bash
+# Initialize starter metadata
+npx @tanstack/create-start@latest starter init
+
+# Compile starter to JSON
+npx @tanstack/create-start@latest starter compile
+```
+
+See [tanstack-start-starter-system.md](tanstack-start-starter-system.md) for detailed documentation.
 
 ---
 
 ## Testing
 
-<!-- 
-This section is the primary focus. Document your testing setup so that agents
-can create appropriate tests without requiring you to re-explain the framework.
-
-Use the `/test.assess-current` command to auto-populate this section.
--->
-
 ### Framework
 
-<!-- 
-What testing framework does this project use?
-Examples: Vitest, Jest, pytest, RSpec, Go testing, etc.
--->
+- **Vitest** (planned) - Fast unit testing compatible with TypeScript
+- **E2E tests** - Shell scripts or Vitest tests that invoke the CLI and verify output
 
 ### Test Location & Naming
 
-<!-- 
-Where do test files live? What naming conventions are used?
-
-Examples:
-- Tests live in `tests/` directory, mirroring `src/` structure
-- Test files named `*.test.ts` or `*.spec.ts`
-- Co-located with source files as `ComponentName.test.tsx`
--->
+```
+tests/
+├── output/          # Temporary test output (gitignored)
+└── e2e/             # End-to-end tests
+    └── *.test.ts    # Test files
+```
 
 ### Running Tests
 
-<!-- 
-What commands are used to run tests?
+```bash
+# Run all tests (once configured)
+npm test
 
-Examples:
-- `npm test` - Run all tests
-- `npm run test:watch` - Watch mode
-- `npm run test:coverage` - With coverage report
--->
+# Run E2E tests
+npm run test:e2e
+```
 
 ### Patterns & Conventions
 
-<!-- 
-What patterns does this project follow for writing tests?
+- E2E tests create projects in `tests/output/`
+- Compare generated files against expected structure
+- Clean up test output after successful runs
 
-Consider documenting:
-- Assertion style (expect, assert, should)
-- Mocking approach (vi.mock, jest.mock, unittest.mock)
-- Test organization (describe/it blocks, test classes)
-- Fixtures or factories used
-- Any custom test utilities
--->
+---
 
-### Example Test Structure
+## Generated Project Technology
 
-<!-- 
-Provide a representative example of how tests are structured in this project.
-This helps agents match the existing style.
+Projects created by r9stack use:
 
-```typescript
-// Example test structure goes here
+| Layer | Technology | Version |
+|-------|------------|---------|
+| Frontend | React | 19.x |
+| Meta-framework | TanStack Start | 1.x |
+| Backend/Database | Convex | 1.x |
+| Auth | WorkOS AuthKit | 7.x |
+| Sessions | iron-session | 8.x |
+| Styling | Tailwind CSS | 4.x |
+| Component Library | shadcn/ui | — |
+
+---
+
+## Development Workflow
+
+### Building the CLI
+
+```bash
+npm run build    # Compile TypeScript to dist/
+npm run dev      # Watch mode
 ```
--->
 
----
+### Testing Locally
 
-## Runtime & Language
+```bash
+npm link         # Link globally for testing
+r9stack init test-project
+```
 
-<!-- 
-Brief notes on the runtime environment.
-Examples: Node.js 20, Python 3.11, Go 1.21
--->
+### Starter Development
 
----
-
-## Build Tools
-
-<!-- 
-Brief notes on build/bundling tools if relevant.
-Examples: TypeScript + tsup, Vite, webpack, esbuild
--->
-
----
-
-## Key Dependencies
-
-<!-- 
-List major frameworks or libraries that define the project's architecture.
-Not an exhaustive list—just the ones that matter for understanding the codebase.
-
-Examples:
-- React 18 with React Router
-- Express.js for API
-- Prisma for database access
--->
-
+```bash
+cd starters/standard
+# Make changes to the project
+npx @tanstack/create-start@latest starter compile
+# starter.json is regenerated
+```
