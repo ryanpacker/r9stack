@@ -29,7 +29,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           <div className="flex items-center gap-2">
             <img src="/images/your-project-logo.png" alt="" className="w-6 h-6" />
             <span className="text-lg font-semibold text-sidebar-foreground">
-              <%= projectName %>
+              My Project
             </span>
           </div>
         )}

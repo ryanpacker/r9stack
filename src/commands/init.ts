@@ -4,16 +4,34 @@ import { resolve } from "node:path";
 import pc from "picocolors";
 import { createTanStackProject } from "../utils/exec.js";
 import { logger } from "../utils/logger.js";
+import { getDefaultStarter, type Starter } from "../utils/starters.js";
 
 export interface InitOptions {
-  // Future options can be added here
+  starter?: string;
+  yes?: boolean;
 }
 
 export async function initCommand(
   projectName: string | undefined,
-  _options: InitOptions
+  options: InitOptions
 ): Promise<void> {
   logger.banner("r9stack - Scaffold your SaaS");
+
+  // Fetch the default starter
+  let starter: Starter;
+  try {
+    logger.info("Fetching available starters...");
+    starter = await getDefaultStarter();
+    logger.blank();
+  } catch {
+    logger.error("Could not fetch starters. Please check your internet connection.");
+    process.exit(1);
+  }
+
+  // Show starter info
+  logger.info(`Using starter: ${pc.cyan(starter.name)} v${starter.version}`);
+  logger.info(pc.dim(starter.description));
+  logger.blank();
 
   // Prompt for project name if not provided
   const name =
@@ -36,14 +54,18 @@ export async function initCommand(
 
   // Check if directory exists
   if (existsSync(targetPath)) {
-    const proceed = await confirm({
-      message: `Directory ${pc.yellow(name)} already exists. Continue anyway?`,
-      default: false,
-    });
+    if (options.yes) {
+      logger.warn(`Directory ${pc.yellow(name)} already exists. Continuing...`);
+    } else {
+      const proceed = await confirm({
+        message: `Directory ${pc.yellow(name)} already exists. Continue anyway?`,
+        default: false,
+      });
 
-    if (!proceed) {
-      logger.info("Aborted.");
-      return;
+      if (!proceed) {
+        logger.info("Aborted.");
+        return;
+      }
     }
   }
 
@@ -53,33 +75,55 @@ export async function initCommand(
   logger.info(`Location: ${pc.cyan(targetPath)}`);
   logger.blank();
 
-  const confirmed = await confirm({
-    message: "Create project with these settings?",
-    default: true,
-  });
+  if (!options.yes) {
+    const confirmed = await confirm({
+      message: "Create project with these settings?",
+      default: true,
+    });
 
-  if (!confirmed) {
-    logger.info("Aborted.");
-    return;
+    if (!confirmed) {
+      logger.info("Aborted.");
+      return;
+    }
   }
 
   logger.blank();
 
-  // Create the TanStack Start project
-  const success = await createTanStackProject(name);
+  // Create the TanStack Start project with starter
+  const success = await createTanStackProject(name, starter.url);
 
   if (!success) {
     process.exit(1);
   }
 
-  // Success message
+  // Success message with next steps
   logger.blank();
   logger.success("Project created successfully!");
   logger.blank();
+
+  // Next steps
   logger.info("Next steps:");
   logger.blank();
-  console.log(`  ${pc.cyan("cd")} ${name}`);
-  console.log(`  ${pc.cyan("npm run dev")}`);
+
+  console.log(`  ${pc.cyan("1.")} Navigate to your project:`);
+  console.log(`     ${pc.dim("$")} ${pc.cyan("cd")} ${name}`);
+  logger.blank();
+
+  console.log(`  ${pc.cyan("2.")} Set up Convex (real-time database):`);
+  console.log(`     ${pc.dim("$")} ${pc.cyan("npx convex dev")}`);
+  console.log(`     ${pc.dim("This will create your Convex project and generate types.")}`);
+  logger.blank();
+
+  console.log(`  ${pc.cyan("3.")} Configure WorkOS authentication:`);
+  console.log(`     ${pc.dim("•")} Go to ${pc.underline("https://dashboard.workos.com")}`);
+  console.log(`     ${pc.dim("•")} Create a project and copy your API keys`);
+  console.log(`     ${pc.dim("•")} Add them to your ${pc.cyan(".env")} file`);
+  logger.blank();
+
+  console.log(`  ${pc.cyan("4.")} Start the development server:`);
+  console.log(`     ${pc.dim("$")} ${pc.cyan("npm run dev")}`);
+  logger.blank();
+
+  logger.info(`${pc.dim("For more info, see the README.md in your project.")}`);
   logger.blank();
 }
-

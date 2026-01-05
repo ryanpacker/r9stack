@@ -35,37 +35,37 @@ export async function execCommand(
   }
 }
 
+export interface CreateProjectOptions {
+  packageManager?: string;
+}
+
 /**
- * Execute npm create command for TanStack Start.
+ * Execute npx create command for TanStack Start with a starter.
  */
 export async function createTanStackProject(
   projectName: string,
-  targetDir?: string
+  starterUrl: string,
+  options: CreateProjectOptions = {}
 ): Promise<boolean> {
+  const { packageManager = "npm" } = options;
+
   const args = [
-    "create",
-    "@tanstack/start@latest",
+    "@tanstack/create-start@latest",
     projectName,
-    "--",
-    "--framework",
-    "React",
+    "--starter",
+    starterUrl,
     "--package-manager",
-    "npm",
-    "--toolchain",
-    "eslint",
+    packageManager,
+    "--no-git",
   ];
 
-  if (targetDir) {
-    args.push("--target-dir", targetDir);
-  }
-
-  logger.step(1, 1, "Creating TanStack Start project...");
+  logger.step(1, 1, "Creating r9stack project...");
   logger.blank();
 
-  const exitCode = await execCommand("npm", args);
+  const exitCode = await execCommand("npx", args);
 
   if (exitCode !== 0) {
-    logger.error("Failed to create TanStack Start project");
+    logger.error("Failed to create project");
     return false;
   }
 

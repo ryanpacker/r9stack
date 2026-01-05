@@ -1,6 +1,6 @@
 {
-  "short_name": "<%= projectName %>",
-  "name": "<%= projectName %>",
+  "short_name": "My Project",
+  "name": "My Project",
   "icons": [
     {
       "src": "favicon.ico",

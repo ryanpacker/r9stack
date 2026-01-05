@@ -6,6 +6,22 @@ A running log of sessions and milestones.
 
 ## Session Logs
 
+### 2026-01-04 - CLI Update for Starter System
+
+- Updated CLI to use TanStack Start's `--starter` flag
+- Created `src/utils/starters.ts` to fetch starters from GitHub-hosted `starters.json`
+- Modified `src/utils/exec.ts` to pass starter URL to `npx @tanstack/create-start`
+- Updated `src/commands/init.ts` with post-creation guidance for Convex and WorkOS
+- Added `--starter-list` option to display available starters
+- Updated README with new status, usage, and tech stack
+
+Key changes:
+- CLI now fetches default starter automatically (no `--starter` flag needed by user)
+- Post-creation messages guide users through Convex and WorkOS setup
+- Starters index hosted at GitHub raw URL
+
+---
+
 ### 2026-01-03 19:54 - Standard Starter Project Build
 
 - Built the standard starter project in `/starters/standard/` using TanStack Start + shadcn add-ons
@@ -51,7 +67,12 @@ Next steps:
 - Basic CLI scaffolding with TanStack Start
 - Published to npm as `r9stack`
 
-### v0.2.0 (In Progress) - Starter-Based Architecture
-- Migrate to TanStack Start's starter system
+### v0.2.0 - Starter-Based Architecture
+- Migrated to TanStack Start's starter system
 - Full walking skeleton with Convex + WorkOS + shadcn/ui
 - Post-creation setup guidance
+- `--starter-list` option to view available starters
+
+### v0.3.0 (Planned) - Optional Integrations
+- GitHub repository creation
+- Vercel deployment

@@ -12,10 +12,10 @@ export const Route = createRootRoute({
     meta: [
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: '<%= projectName %>' },
+      { title: 'My Project' },
       // Open Graph
       { property: 'og:type', content: 'website' },
-      { property: 'og:title', content: '<%= projectName %>' },
+      { property: 'og:title', content: 'My Project' },
       {
         property: 'og:description',
         content:
@@ -24,7 +24,7 @@ export const Route = createRootRoute({
       { property: 'og:image', content: '/images/your-project-logo.png' },
       // Twitter Card
       { name: 'twitter:card', content: 'summary' },
-      { name: 'twitter:title', content: '<%= projectName %>' },
+      { name: 'twitter:title', content: 'My Project' },
       {
         name: 'twitter:description',
         content:

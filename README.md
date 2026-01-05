@@ -8,15 +8,15 @@
 
 ## Status
 
-🚧 **Early Development** - The CLI currently scaffolds TanStack Start projects. Additional integrations are in progress.
+🚀 **v0.2.0 Released** - The CLI now creates full-featured projects using the starter system.
 
 | Feature | Status |
 |---------|--------|
-| TanStack Start scaffold | ✅ Working |
-| Starter-based architecture | 🟡 In Progress |
-| shadcn/ui integration | 🟡 In Progress |
-| Convex backend | 🟡 In Progress |
-| WorkOS auth | 🟡 In Progress |
+| TanStack Start + React 19 | ✅ Working |
+| Starter-based architecture | ✅ Working |
+| shadcn/ui + Tailwind CSS | ✅ Working |
+| Convex backend | ✅ Working |
+| WorkOS auth | ✅ Working |
 | GitHub repo creation | 📋 Planned |
 | Vercel deployment | 📋 Planned |
 | Stripe payments | 📋 Post-V1 |
@@ -35,16 +35,19 @@ r9stack uses TanStack Start's [starter system](docs/tanstack-start-starter-syste
 2. **TanStack Start creates the project** and applies r9stack customizations
 3. **CLI guides post-creation setup** for Convex, WorkOS, and optional GitHub/Vercel integration
 
-## Tech Stack (V1 Target)
+## Tech Stack
 
-| Layer | Technology | Version |
-|-------|------------|---------|
-| Frontend | React via TanStack Start | React 19, TanStack Start 1.x |
-| Backend | Convex | 1.x |
-| Database | Convex (built-in) | — |
-| Auth | WorkOS AuthKit | 7.x |
-| Sessions | iron-session | 8.x |
-| Styling | shadcn/ui + Tailwind CSS | Tailwind 4.x |
+| Layer | Technology | Description |
+|-------|------------|-------------|
+| Framework | TanStack Start | Full-stack React framework with SSR and server functions |
+| UI Library | React 19 | Declarative UI with the latest React features |
+| Language | TypeScript | Type-safe JavaScript for reliable code |
+| Styling | Tailwind CSS 4 | Utility-first CSS framework |
+| Build | Vite | Lightning-fast build tool and dev server |
+| Backend | Convex | Real-time backend with automatic sync |
+| Auth | WorkOS AuthKit | Enterprise-ready SSO and MFA |
+| Sessions | iron-session | Encrypted cookie-based sessions |
+| Components | shadcn/ui | Beautiful, accessible Radix-based components |
 
 ## Getting Started
 
@@ -85,9 +88,17 @@ r9stack init
 # Or provide project name directly
 r9stack init my-awesome-app
 
+# List available starters
+r9stack --starter-list
+
 # View help
 r9stack --help
 ```
+
+The CLI will:
+1. Fetch the latest starter template from GitHub
+2. Create your project using TanStack Start
+3. Guide you through post-creation setup (Convex, WorkOS)
 
 ## What Gets Generated (V1 Target)
 
