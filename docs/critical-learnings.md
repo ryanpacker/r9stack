@@ -46,6 +46,22 @@ The following remain potentially configurable:
 2. Embed starter.json and serve via data URL
 3. Use a tunneling service during development
 
+### GitHub Raw Content CDN Caching
+
+**Context:** Starter updates not reflecting immediately after push.
+
+**Insight:** GitHub's raw.githubusercontent.com CDN has a cache that can take 5-10 minutes to refresh. When testing immediately after pushing changes, the old `starter.json` may still be served.
+
+**Workaround:** Use the commit hash in the URL instead of `main`:
+```
+https://raw.githubusercontent.com/user/repo/c7a05db/path/to/starter.json
+```
+
+**Implication:** When testing immediately after pushing starter changes:
+1. Use commit hash URLs during development/testing
+2. Wait 5-10 minutes for CDN cache to refresh before testing with `main` branch URL
+3. Consider this when designing CI/CD pipelines for starter publishing
+
 ---
 
 ## TanStack Start CLI
@@ -84,6 +100,16 @@ lsof -ti :42069 | xargs kill -9
 ```
 
 **Implication:** Document this troubleshooting step for developers.
+
+### DevTools triggerImage Persistence
+
+**Context:** Changing the DevTools trigger button image doesn't update immediately.
+
+**Insight:** TanStack DevTools stores the `triggerImage` configuration in localStorage. Once set, it persists even if the code changes. This only affects the first load for returning users.
+
+**Solution:** Clear the relevant localStorage item or use browser DevTools to clear all site data.
+
+**Implication:** New projects will show the correct trigger image. Existing development environments may need localStorage cleared. This is not a bug - it's intentional persistence for user customization.
 
 ---
 
