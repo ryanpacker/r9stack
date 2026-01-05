@@ -6,6 +6,23 @@ A running log of sessions and milestones.
 
 ## Session Logs
 
+### 2026-01-05 - Flight Rules + GitHub Integration
+
+- Added post-creation workflow for Flight Rules and GitHub
+- Created `src/utils/flight-rules.ts` - installs Flight Rules from GitHub tarball
+- Created `src/utils/github.ts` - GitHub CLI detection and repo creation
+- Added new CLI flags:
+  - `--no-flight-rules` - Skip Flight Rules installation
+  - `--github` - Create GitHub repository
+  - `--no-github` - Skip GitHub repository creation
+  - `--private` / `--public` - Control repo visibility
+- Updated init command to prompt for Flight Rules and GitHub options
+- Flight Rules installed by default; GitHub opt-in (or skipped with `--yes`)
+- Updated README with new flags and documentation
+- Bumped version to 0.4.0
+
+---
+
 ### 2026-01-04 - CLI Update for Starter System
 
 - Updated CLI to use TanStack Start's `--starter` flag
@@ -73,6 +90,17 @@ Next steps:
 - Post-creation setup guidance
 - `--starter-list` option to view available starters
 
-### v0.3.0 (Planned) - Optional Integrations
-- GitHub repository creation
-- Vercel deployment
+### v0.3.0 - Starter Selection
+- Added `--starter <id>` flag for explicit starter selection
+- Short ID support (e.g., `--starter standard`)
+- Project name placeholder (`__PROJECT_NAME__`) replacement
+
+### v0.4.0 - Flight Rules + GitHub Integration
+- Flight Rules documentation framework installation
+- GitHub repository creation via `gh` CLI
+- New CLI flags for controlling post-creation behavior
+- Default: Flight Rules installed, GitHub opt-in
+
+### v0.5.0 (Planned) - Vercel Deployment
+- Automatic Vercel project deployment
+- Custom domain configuration

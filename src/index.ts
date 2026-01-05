@@ -11,7 +11,7 @@ const program = new Command();
 program
   .name("r9stack")
   .description("CLI tool that scaffolds opinionated SaaS projects")
-  .version("0.3.0");
+  .version("0.4.0");
 
 // Starter list option
 program
@@ -28,6 +28,11 @@ program
   .description("Scaffold a new r9stack project")
   .option("-y, --yes", "Skip confirmation prompts")
   .option("-s, --starter <id>", "Use a specific starter (e.g., 'standard')")
+  .option("--no-flight-rules", "Skip Flight Rules installation")
+  .option("--github", "Create GitHub repository")
+  .option("--no-github", "Skip GitHub repository creation")
+  .option("--private", "Make GitHub repository private (default)")
+  .option("--public", "Make GitHub repository public")
   .action(initCommand);
 
 // Make init the default command when no command is specified
