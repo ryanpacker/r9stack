@@ -5,6 +5,7 @@ import pc from "picocolors";
 import { createTanStackProject } from "../utils/exec.js";
 import { logger } from "../utils/logger.js";
 import { getDefaultStarter, type Starter } from "../utils/starters.js";
+import { replaceProjectNamePlaceholder } from "../utils/templates.js";
 
 export interface InitOptions {
   starter?: string;
@@ -95,6 +96,9 @@ export async function initCommand(
   if (!success) {
     process.exit(1);
   }
+
+  // Replace project name placeholder in generated files
+  replaceProjectNamePlaceholder(targetPath, name);
 
   // Success message with next steps
   logger.blank();

@@ -1,6 +1,6 @@
 {
-  "short_name": "My Project",
-  "name": "My Project",
+  "short_name": "__PROJECT_NAME__",
+  "name": "__PROJECT_NAME__",
   "icons": [
     {
       "src": "favicon.ico",

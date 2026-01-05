@@ -15,11 +15,11 @@ function LandingPage() {
           <div className="flex items-center gap-3">
             <img
               src="/images/your-project-logo.png"
-              alt="My Project"
+              alt="__PROJECT_NAME__"
               className="w-8 h-8"
             />
             <span className="text-xl font-semibold text-foreground">
-              My Project
+              __PROJECT_NAME__
             </span>
           </div>
 
@@ -47,7 +47,7 @@ function LandingPage() {
         <div className="text-center max-w-3xl mx-auto">
           <h1 className="text-5xl font-bold tracking-tight text-foreground mb-6">
             Welcome to
-            <span className="block text-primary mt-2">My Project</span>
+            <span className="block text-primary mt-2">__PROJECT_NAME__</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-10">
             Your modern web application is ready to go. This project includes
