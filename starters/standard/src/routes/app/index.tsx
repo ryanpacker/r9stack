@@ -15,7 +15,7 @@ function AppHome() {
           Welcome back{user?.firstName ? `, ${user.firstName}` : ''}!
         </h1>
         <p className="text-lg text-muted-foreground mb-8">
-          You're now signed in to r9stack. Explore the demos or start building
+          You're now signed in. Explore the demos or start building
           your application.
         </p>
         <div className="flex flex-col gap-4 text-left bg-muted/50 rounded-lg p-6 border border-border">

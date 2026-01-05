@@ -12,25 +12,25 @@ export const Route = createRootRoute({
     meta: [
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'r9stack' },
+      { title: '<%= projectName %>' },
       // Open Graph
       { property: 'og:type', content: 'website' },
-      { property: 'og:title', content: 'r9stack' },
+      { property: 'og:title', content: '<%= projectName %>' },
       {
         property: 'og:description',
         content:
-          'A walking skeleton for building modern web applications with TanStack Start, Convex, WorkOS, and shadcn/ui.',
+          'A modern web application built with TanStack Start, Convex, and WorkOS.',
       },
-      { property: 'og:image', content: '/images/r9stack-logo.png' },
+      { property: 'og:image', content: '/images/your-project-logo.png' },
       // Twitter Card
       { name: 'twitter:card', content: 'summary' },
-      { name: 'twitter:title', content: 'r9stack' },
+      { name: 'twitter:title', content: '<%= projectName %>' },
       {
         name: 'twitter:description',
         content:
-          'A walking skeleton for building modern web applications with TanStack Start, Convex, WorkOS, and shadcn/ui.',
+          'A modern web application built with TanStack Start, Convex, and WorkOS.',
       },
-      { name: 'twitter:image', content: '/images/r9stack-logo.png' },
+      { name: 'twitter:image', content: '/images/your-project-logo.png' },
     ],
     links: [
       {
@@ -58,7 +58,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <TanStackDevtools
           config={{
             position: 'bottom-right',
-            triggerImage: '/images/r9stack-logo-markonly-circle.png',
+            triggerImage: '/images/r9stack-icon-circle.png',
           }}
           plugins={[
             {

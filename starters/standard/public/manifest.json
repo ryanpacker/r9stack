@@ -1,6 +1,6 @@
 {
-  "short_name": "R9stack",
-  "name": "R9stack",
+  "short_name": "<%= projectName %>",
+  "name": "<%= projectName %>",
   "icons": [
     {
       "src": "favicon.ico",

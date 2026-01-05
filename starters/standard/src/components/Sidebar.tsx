@@ -26,9 +26,12 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         )}
       >
         {!collapsed && (
-          <span className="text-lg font-semibold text-sidebar-foreground">
-            r9stack
-          </span>
+          <div className="flex items-center gap-2">
+            <img src="/images/your-project-logo.png" alt="" className="w-6 h-6" />
+            <span className="text-lg font-semibold text-sidebar-foreground">
+              <%= projectName %>
+            </span>
+          </div>
         )}
         <button
           onClick={onToggle}
