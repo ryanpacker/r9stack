@@ -11,7 +11,7 @@ const program = new Command();
 program
   .name("r9stack")
   .description("CLI tool that scaffolds opinionated SaaS projects")
-  .version("0.2.0");
+  .version("0.3.0");
 
 // Starter list option
 program
