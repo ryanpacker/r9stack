@@ -4,7 +4,12 @@ import { resolve } from "node:path";
 import pc from "picocolors";
 import { createTanStackProject } from "../utils/exec.js";
 import { logger } from "../utils/logger.js";
-import { getDefaultStarter, type Starter } from "../utils/starters.js";
+import {
+  getDefaultStarter,
+  getStarterById,
+  fetchStarters,
+  type Starter,
+} from "../utils/starters.js";
 import { replaceProjectNamePlaceholder } from "../utils/templates.js";
 
 export interface InitOptions {
@@ -18,11 +23,32 @@ export async function initCommand(
 ): Promise<void> {
   logger.banner("r9stack - Scaffold your SaaS");
 
-  // Fetch the default starter
+  // Fetch the starter
   let starter: Starter;
   try {
     logger.info("Fetching available starters...");
-    starter = await getDefaultStarter();
+
+    if (options.starter) {
+      // User specified a starter by ID
+      const found = await getStarterById(options.starter);
+      if (!found) {
+        logger.error(`Starter "${options.starter}" not found.`);
+        logger.blank();
+        logger.info("Available starters:");
+        const starters = await fetchStarters();
+        for (const s of starters) {
+          const shortId = s.id.replace("r9-starter-", "");
+          console.log(`  ${pc.cyan(shortId)} - ${s.name}`);
+        }
+        logger.blank();
+        process.exit(1);
+      }
+      starter = found;
+    } else {
+      // Use default starter
+      starter = await getDefaultStarter();
+    }
+
     logger.blank();
   } catch {
     logger.error("Could not fetch starters. Please check your internet connection.");

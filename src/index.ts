@@ -27,6 +27,7 @@ program
   .command("init [project-name]")
   .description("Scaffold a new r9stack project")
   .option("-y, --yes", "Skip confirmation prompts")
+  .option("-s, --starter <id>", "Use a specific starter (e.g., 'standard')")
   .action(initCommand);
 
 // Make init the default command when no command is specified
