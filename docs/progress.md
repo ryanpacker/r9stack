@@ -6,6 +6,17 @@ A running log of sessions and milestones.
 
 ## Session Logs
 
+### 2026-01-10 - npm Publishing
+
+- Updated Flight Rules installation to use `flight-rules@dev` npm package
+- Added `files` field to package.json for npm publishing
+- Updated README with `npx r9stack@dev` usage instructions
+- Published r9stack@0.4.1 to npm with @dev tag
+
+See: [Session Log](session_logs/20260110_session.md)
+
+---
+
 ### 2026-01-05 - Flight Rules + GitHub Integration
 
 - Added post-creation workflow for Flight Rules and GitHub
@@ -100,6 +111,11 @@ Next steps:
 - GitHub repository creation via `gh` CLI
 - New CLI flags for controlling post-creation behavior
 - Default: Flight Rules installed, GitHub opt-in
+
+### v0.4.1 - npm Publishing
+- Published to npm with @dev distribution tag
+- Flight Rules installation via npm package (flight-rules@dev)
+- Usage: `npx r9stack@dev init my-project`
 
 ### v0.5.0 (Planned) - Vercel Deployment
 - Automatic Vercel project deployment
