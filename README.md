@@ -8,7 +8,7 @@
 
 ## Status
 
-🚀 **v0.4.0 Released** - Now with Flight Rules and GitHub integration!
+🚀 **Available on npm** - Install with `npx r9stack@dev`
 
 | Feature | Status |
 |---------|--------|
@@ -52,14 +52,9 @@ r9stack uses TanStack Start's [starter system](docs/tanstack-start-starter-syste
 
 ## Getting Started
 
-### From npm (once published)
-
 ```bash
-# Install globally
-npm install -g r9stack
-
-# Or run directly with npx
-npx r9stack init my-project
+# Create a new project
+npx r9stack@dev init my-project
 ```
 
 ### Local Development
@@ -84,31 +79,31 @@ r9stack init my-project
 
 ```bash
 # Interactive mode - prompts for project name and options
-r9stack init
+npx r9stack@dev init
 
 # Provide project name directly
-r9stack init my-awesome-app
+npx r9stack@dev init my-awesome-app
 
 # Non-interactive with defaults (installs Flight Rules, skips GitHub)
-r9stack init my-awesome-app --yes
+npx r9stack@dev init my-awesome-app --yes
 
 # Create with GitHub repo
-r9stack init my-awesome-app --yes --github
+npx r9stack@dev init my-awesome-app --yes --github
 
 # Create public GitHub repo
-r9stack init my-awesome-app --github --public
+npx r9stack@dev init my-awesome-app --github --public
 
 # Skip Flight Rules installation
-r9stack init my-awesome-app --no-flight-rules
+npx r9stack@dev init my-awesome-app --no-flight-rules
 
 # Use a specific starter
-r9stack init my-awesome-app --starter standard
+npx r9stack@dev init my-awesome-app --starter standard
 
 # List available starters
-r9stack --starter-list
+npx r9stack@dev --starter-list
 
 # View help
-r9stack init --help
+npx r9stack@dev init --help
 ```
 
 ### CLI Options
@@ -133,7 +128,7 @@ The CLI will:
 
 ## What Gets Generated (V1 Target)
 
-Running `r9stack init` will create a project with:
+Running `npx r9stack@dev init` will create a project with:
 
 ```
 my-project/
