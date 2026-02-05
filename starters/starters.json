@@ -4,7 +4,7 @@
       "id": "r9-starter-standard",
       "name": "r9stack Standard",
       "description": "The standard full-featured starter with TanStack Start, Convex, WorkOS, shadcn/ui, flight-rules, and automatic publishing to Vercel",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "url": "https://raw.githubusercontent.com/ryanpacker/r9stack/main/starters/standard/starter.json"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "id": "r9-starter-standard",
   "name": "r9stack Standard Starter",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Full-featured starter with TanStack Start, Convex, WorkOS authentication, and shadcn/ui",
   "author": "r9stack <hello@r9stack.dev>",
   "license": "Apache-2.0",
