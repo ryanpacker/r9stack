@@ -1,6 +1,6 @@
 # Flight Rules – Agent Guidelines
 
-flight_rules_version: 0.5.1
+flight_rules_version: 0.13.8
 
 This file defines how agents (Claude Code, Cursor, etc.) should work on software projects using the Flight Rules system.
 
@@ -134,20 +134,49 @@ When working on code:
      - Any deviations from original plan
      - Updated `Status:` values
 
+### Spec Evolution (No Version History)
+
+  Implementation specs describe **the current intended state** of the system. They are not changelogs.
+
+  **When requirements change:**
+  - Update specs to reflect the new reality. Delete descriptions of old approaches.
+  - Do NOT add "v2" sections alongside "v1" descriptions
+  - Do NOT create separate documents for new versions (e.g., `design-decisions-v2.md`)
+  - Do NOT maintain comparison tables showing "what was vs what is now"
+
+  **Where history belongs:**
+  - Git commits and diffs preserve what changed
+  - Session logs in `docs/session_logs/` capture decision context and rationale
+  - `docs/progress.md` tracks milestones chronologically
+
+  **Think of specs like source code**: When you refactor a function, you don't leave the old implementation
+  commented out with notes explaining how it used to work. You update it and trust Git to preserve history.
+
+  **Example of what NOT to do:**
+  - "v2 Requirements" as a separate document
+  - "Key Changes from v1" tables
+  - Task titles like "2.1.1. Plans Table (v2)"
+  - "Migration Notes" sections explaining what's being deleted
+
+  **Example of what TO do:**
+  - Single authoritative document describing current design
+  - Update existing task groups when approach changes
+  - Delete obsolete task groups entirely
+
 ---
 
 ## 4. Coding sessions
 
 The user will explicitly start and end sessions using commands or workflows like:
 
-- **"start coding session"** → use `.flight-rules/commands/start-coding-session.md`
-- **"end coding session"**   → use `.flight-rules/commands/end-coding-session.md`
+- **"start coding session"** → use `.flight-rules/commands/dev-session.start.md`
+- **"end coding session"**   → use `.flight-rules/commands/dev-session.end.md`
 
 Agents **must not** initiate these workflows on their own; they are only run when the user asks.
 
 ### 4.1 Start coding session
 
-When the user triggers a start session command, follow the process defined in `.flight-rules/commands/start-coding-session.md`. The generic behavior:
+When the user triggers a start session command, follow the process defined in `.flight-rules/commands/dev-session.start.md`. The generic behavior:
 
 1. **Review project context**
    - Read `docs/prd.md`, `docs/implementation/overview.md`, relevant spec files, and `docs/progress.md`.
@@ -177,7 +206,7 @@ When the user triggers a start session command, follow the process defined in `.
 
 ### 4.2 End coding session
 
-When the user triggers an end session command, follow the process in `.flight-rules/commands/end-coding-session.md`. Generic behavior:
+When the user triggers an end session command, follow the process in `.flight-rules/commands/dev-session.end.md`. Generic behavior:
 
 1. **Review sandbox / scratch files**  
    - Identify temporary / sandbox code and determine, with the user, what to keep vs delete.

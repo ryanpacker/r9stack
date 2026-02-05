@@ -151,3 +151,4 @@ Throughout this command, maintain these behaviors:
 - **Check consistency** — Goals, non-goals, and success criteria should align
 - **Help, don't block** — If user says "I don't know," help them figure it out
 
+
