@@ -1,6 +1,6 @@
 {
   "name": "r9stack",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "CLI tool that scaffolds opinionated SaaS projects with a fully functional walking skeleton",
   "type": "module",
   "main": "dist/index.js",
