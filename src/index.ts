@@ -3,7 +3,7 @@
 import { Command } from "commander";
 import pc from "picocolors";
 import { initCommand } from "./commands/init.js";
-import { fetchStarters } from "./utils/starters.js";
+import { fetchTemplates } from "./utils/templates.js";
 import { logger } from "./utils/logger.js";
 
 const program = new Command();
@@ -13,12 +13,12 @@ program
   .description("CLI tool that scaffolds opinionated SaaS projects")
   .version("0.4.0");
 
-// Starter list option
+// Template list option
 program
-  .option("--starter-list", "List available starters")
+  .option("--template-list", "List available templates")
   .hook("preAction", async (thisCommand) => {
-    if (thisCommand.opts().starterList) {
-      await listStarters();
+    if (thisCommand.opts().templateList) {
+      await listTemplates();
       process.exit(0);
     }
   });
@@ -27,7 +27,7 @@ program
   .command("init [project-name]")
   .description("Scaffold a new r9stack project")
   .option("-y, --yes", "Skip confirmation prompts")
-  .option("-s, --starter <id>", "Use a specific starter (e.g., 'standard')")
+  .option("-t, --template <id>", "Use a specific template (e.g., 'standard')")
   .option("--no-flight-rules", "Skip Flight Rules installation")
   .option("--github", "Create GitHub repository")
   .option("--no-github", "Skip GitHub repository creation")
@@ -37,29 +37,29 @@ program
 
 // Make init the default command when no command is specified
 program.action(async (options) => {
-  if (options.starterList) {
+  if (options.templateList) {
     // Already handled by hook
     return;
   }
   await initCommand(undefined, {});
 });
 
-async function listStarters(): Promise<void> {
-  logger.banner("r9stack - Available Starters");
+async function listTemplates(): Promise<void> {
+  logger.banner("r9stack - Available Templates");
 
   try {
-    const starters = await fetchStarters();
+    const templates = await fetchTemplates();
 
-    if (starters.length === 0) {
-      logger.info("No starters available.");
+    if (templates.length === 0) {
+      logger.info("No templates available.");
       return;
     }
 
-    for (const starter of starters) {
+    for (const template of templates) {
       console.log();
-      console.log(`  ${pc.cyan(starter.name)} ${pc.dim(`v${starter.version}`)}`);
-      console.log(`  ${pc.dim(starter.description)}`);
-      console.log(`  ${pc.dim("ID:")} ${starter.id}`);
+      console.log(`  ${pc.cyan(template.name)} ${pc.dim(`v${template.version}`)}`);
+      console.log(`  ${pc.dim(template.description)}`);
+      console.log(`  ${pc.dim("ID:")} ${template.id}`);
     }
 
     console.log();
@@ -67,7 +67,7 @@ async function listStarters(): Promise<void> {
     console.log(`  ${pc.dim("$")} ${pc.cyan("npx r9stack init my-project")}`);
     console.log();
   } catch {
-    logger.error("Failed to fetch starters. Please check your internet connection.");
+    logger.error("Failed to fetch templates. Please check your internet connection.");
     process.exit(1);
   }
 }

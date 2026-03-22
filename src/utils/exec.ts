@@ -40,20 +40,21 @@ export interface CreateProjectOptions {
 }
 
 /**
- * Execute npx create command for TanStack Start with a starter.
+ * Execute npx create command for TanStack Start with a template.
  */
 export async function createTanStackProject(
   projectName: string,
-  starterUrl: string,
+  templateUrl: string,
   options: CreateProjectOptions = {}
 ): Promise<boolean> {
   const { packageManager = "npm" } = options;
 
   const args = [
-    "@tanstack/create-start@latest",
+    "@tanstack/cli@latest",
+    "create",
     projectName,
-    "--starter",
-    starterUrl,
+    "--template",
+    templateUrl,
     "--package-manager",
     packageManager,
     "--no-git",

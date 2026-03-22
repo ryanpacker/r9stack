@@ -5,12 +5,12 @@ import pc from "picocolors";
 import { createTanStackProject } from "../utils/exec.js";
 import { logger } from "../utils/logger.js";
 import {
-  getDefaultStarter,
-  getStarterById,
-  fetchStarters,
-  type Starter,
-} from "../utils/starters.js";
-import { replaceProjectNamePlaceholder } from "../utils/templates.js";
+  getDefaultTemplate,
+  getTemplateById,
+  fetchTemplates,
+  type Template,
+} from "../utils/templates.js";
+import { replaceProjectNamePlaceholder } from "../utils/placeholders.js";
 import { installFlightRules } from "../utils/flight-rules.js";
 import {
   isGhCliInstalled,
@@ -20,7 +20,7 @@ import {
 } from "../utils/github.js";
 
 export interface InitOptions {
-  starter?: string;
+  template?: string;
   yes?: boolean;
   flightRules?: boolean;
   github?: boolean;
@@ -34,41 +34,41 @@ export async function initCommand(
 ): Promise<void> {
   logger.banner("r9stack - Scaffold your SaaS");
 
-  // Fetch the starter
-  let starter: Starter;
+  // Fetch the template
+  let template: Template;
   try {
-    logger.info("Fetching available starters...");
+    logger.info("Fetching available templates...");
 
-    if (options.starter) {
-      // User specified a starter by ID
-      const found = await getStarterById(options.starter);
+    if (options.template) {
+      // User specified a template by ID
+      const found = await getTemplateById(options.template);
       if (!found) {
-        logger.error(`Starter "${options.starter}" not found.`);
+        logger.error(`Template "${options.template}" not found.`);
         logger.blank();
-        logger.info("Available starters:");
-        const starters = await fetchStarters();
-        for (const s of starters) {
-          const shortId = s.id.replace("r9-starter-", "");
-          console.log(`  ${pc.cyan(shortId)} - ${s.name}`);
+        logger.info("Available templates:");
+        const templates = await fetchTemplates();
+        for (const t of templates) {
+          const shortId = t.id.replace("r9-template-", "");
+          console.log(`  ${pc.cyan(shortId)} - ${t.name}`);
         }
         logger.blank();
         process.exit(1);
       }
-      starter = found;
+      template = found;
     } else {
-      // Use default starter
-      starter = await getDefaultStarter();
+      // Use default template
+      template = await getDefaultTemplate();
     }
 
     logger.blank();
   } catch {
-    logger.error("Could not fetch starters. Please check your internet connection.");
+    logger.error("Could not fetch templates. Please check your internet connection.");
     process.exit(1);
   }
 
-  // Show starter info
-  logger.info(`Using starter: ${pc.cyan(starter.name)} v${starter.version}`);
-  logger.info(pc.dim(starter.description));
+  // Show template info
+  logger.info(`Using template: ${pc.cyan(template.name)} v${template.version}`);
+  logger.info(pc.dim(template.description));
   logger.blank();
 
   // Prompt for project name if not provided
@@ -127,8 +127,8 @@ export async function initCommand(
 
   logger.blank();
 
-  // Create the TanStack Start project with starter
-  const success = await createTanStackProject(name, starter.url);
+  // Create the TanStack Start project with template
+  const success = await createTanStackProject(name, template.url);
 
   if (!success) {
     process.exit(1);

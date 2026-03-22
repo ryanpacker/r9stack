@@ -1,8 +1,8 @@
 {
-  "id": "r9-starter-standard",
-  "name": "r9stack Standard Starter",
+  "id": "r9-template-standard",
+  "name": "r9stack Standard",
   "version": "1.1.0",
-  "description": "Full-featured starter with TanStack Start, Convex, WorkOS authentication, and shadcn/ui",
+  "description": "Full-featured template with TanStack Start, Convex, WorkOS authentication, and shadcn/ui",
   "author": "r9stack <hello@r9stack.dev>",
   "license": "Apache-2.0",
   "link": "https://github.com/ryanpacker/r9stack",
@@ -23,7 +23,6 @@
     }
   },
   "dependsOn": [
-    "start",
     "shadcn",
     "eslint",
     "nitro"

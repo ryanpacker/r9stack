@@ -1,0 +1,11 @@
+{
+  "templates": [
+    {
+      "id": "r9-template-standard",
+      "name": "r9stack Standard",
+      "description": "The standard full-featured template with TanStack Start, Convex, WorkOS, shadcn/ui, flight-rules, and automatic publishing to Vercel",
+      "version": "1.1.0",
+      "url": "https://raw.githubusercontent.com/ryanpacker/r9stack/main/templates/standard/template.json"
+    }
+  ]
+}

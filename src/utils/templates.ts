@@ -1,94 +1,64 @@
-import { readFileSync, writeFileSync, readdirSync, statSync } from "node:fs";
-import { join } from "node:path";
 import { logger } from "./logger.js";
 
-const PROJECT_NAME_PLACEHOLDER = "__PROJECT_NAME__";
+const TEMPLATES_URL =
+  "https://raw.githubusercontent.com/ryanpacker/r9stack/main/templates/templates.json";
 
-/**
- * Recursively find all files in a directory.
- */
-function getAllFiles(dir: string, files: string[] = []): string[] {
-  const entries = readdirSync(dir);
+export interface Template {
+  id: string;
+  name: string;
+  description: string;
+  version: string;
+  url: string;
+}
 
-  for (const entry of entries) {
-    const fullPath = join(dir, entry);
-    const stat = statSync(fullPath);
-
-    if (stat.isDirectory()) {
-      // Skip node_modules and hidden directories
-      if (entry !== "node_modules" && !entry.startsWith(".")) {
-        getAllFiles(fullPath, files);
-      }
-    } else if (stat.isFile()) {
-      files.push(fullPath);
-    }
-  }
-
-  return files;
+interface TemplatesIndex {
+  templates: Template[];
 }
 
 /**
- * Convert a project name (kebab-case) to a display name (Title Case).
- * Examples:
- *   my-awesome-project -> My Awesome Project
- *   test-app -> Test App
+ * Fetch the list of available templates from GitHub.
  */
-export function toDisplayName(projectName: string): string {
-  return projectName
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+export async function fetchTemplates(): Promise<Template[]> {
+  try {
+    const response = await fetch(TEMPLATES_URL);
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const data = (await response.json()) as TemplatesIndex;
+
+    if (!data.templates || !Array.isArray(data.templates)) {
+      throw new Error("Invalid templates index format");
+    }
+
+    return data.templates;
+  } catch (error) {
+    logger.error("Failed to fetch templates list");
+    if (error instanceof Error) {
+      logger.error(error.message);
+    }
+    throw error;
+  }
 }
 
 /**
- * Replace placeholder strings in all files within a project directory.
+ * Get the default template (first in the list).
  */
-export function replaceProjectNamePlaceholder(
-  projectDir: string,
-  projectName: string
-): void {
-  const displayName = toDisplayName(projectName);
-  const files = getAllFiles(projectDir);
+export async function getDefaultTemplate(): Promise<Template> {
+  const templates = await fetchTemplates();
 
-  let replacedCount = 0;
-
-  for (const file of files) {
-    // Only process text files
-    const ext = file.split(".").pop()?.toLowerCase();
-    const textExtensions = [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "html",
-      "css",
-      "md",
-      "txt",
-    ];
-
-    if (!ext || !textExtensions.includes(ext)) {
-      continue;
-    }
-
-    try {
-      const content = readFileSync(file, "utf-8");
-
-      if (content.includes(PROJECT_NAME_PLACEHOLDER)) {
-        const newContent = content.replaceAll(
-          PROJECT_NAME_PLACEHOLDER,
-          displayName
-        );
-        writeFileSync(file, newContent, "utf-8");
-        replacedCount++;
-      }
-    } catch {
-      // Skip files that can't be read (binary, etc.)
-    }
+  if (templates.length === 0) {
+    throw new Error("No templates available");
   }
 
-  if (replacedCount > 0) {
-    logger.info(`Customized ${replacedCount} file(s) with project name`);
-  }
+  return templates[0];
 }
 
+/**
+ * Find a template by its ID.
+ */
+export async function getTemplateById(id: string): Promise<Template | undefined> {
+  const templates = await fetchTemplates();
+  return templates.find((t) => t.id === id || t.id.endsWith(`-${id}`));
+}
