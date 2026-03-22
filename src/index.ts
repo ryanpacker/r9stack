@@ -11,7 +11,7 @@ const program = new Command();
 program
   .name("r9stack")
   .description("CLI tool that scaffolds opinionated SaaS projects")
-  .version("0.4.0");
+  .version("0.5.0");
 
 // Template list option
 program
