@@ -6,6 +6,13 @@
       "description": "The standard full-featured template with TanStack Start, Convex, WorkOS, shadcn/ui, flight-rules, and automatic publishing to Vercel",
       "version": "1.1.1",
       "url": "https://raw.githubusercontent.com/ryanpacker/r9stack/main/templates/standard/template.json"
+    },
+    {
+      "id": "r9-template-auth",
+      "name": "r9stack Auth",
+      "description": "Full auth template with Convex-level authentication, WorkOS RBAC, and API access patterns — five auth demos included",
+      "version": "1.0.0",
+      "url": "https://raw.githubusercontent.com/ryanpacker/r9stack/main/templates/auth/template.json"
     }
   ]
 }
