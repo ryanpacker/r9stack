@@ -13,7 +13,7 @@
 | Feature | Status |
 |---------|--------|
 | TanStack Start + React 19 | ✅ Working |
-| Starter-based architecture | ✅ Working |
+| Template-based architecture | ✅ Working |
 | shadcn/ui + Tailwind CSS | ✅ Working |
 | Convex backend | ✅ Working |
 | WorkOS auth | ✅ Working |
@@ -30,9 +30,9 @@ r9stack eliminates this friction. Run a single command and have a scaffolded ful
 
 ## Architecture
 
-r9stack uses TanStack Start's [starter system](docs/tanstack-start-starter-system.md) to create projects:
+r9stack uses TanStack Start's [template system](docs/tanstack-start-starter-system.md) to create projects:
 
-1. **CLI invokes TanStack Start** with a `--starter` flag pointing to a hosted `starter.json`
+1. **CLI invokes TanStack Start** with a `--template` flag pointing to a hosted `template.json`
 2. **TanStack Start creates the project** and applies r9stack customizations
 3. **CLI guides post-creation setup** for Convex, WorkOS, and optional GitHub/Vercel integration
 
@@ -96,11 +96,11 @@ npx r9stack@dev init my-awesome-app --github --public
 # Skip Flight Rules installation
 npx r9stack@dev init my-awesome-app --no-flight-rules
 
-# Use a specific starter
-npx r9stack@dev init my-awesome-app --starter standard
+# Use a specific template
+npx r9stack@dev init my-awesome-app --template standard
 
-# List available starters
-npx r9stack@dev --starter-list
+# List available templates
+npx r9stack@dev --template-list
 
 # View help
 npx r9stack@dev init --help
@@ -111,7 +111,7 @@ npx r9stack@dev init --help
 | Flag | Description |
 |------|-------------|
 | `-y, --yes` | Skip confirmation prompts |
-| `-s, --starter <id>` | Use a specific starter (e.g., 'standard') |
+| `-t, --template <id>` | Use a specific template (e.g., 'standard') |
 | `--no-flight-rules` | Skip Flight Rules installation |
 | `--github` | Create GitHub repository |
 | `--no-github` | Skip GitHub repository creation |
@@ -119,7 +119,7 @@ npx r9stack@dev init --help
 | `--public` | Make GitHub repository public |
 
 The CLI will:
-1. Fetch the latest starter template from GitHub
+1. Fetch the latest template from GitHub
 2. Create your project using TanStack Start
 3. Replace project name placeholders in generated files
 4. Install [Flight Rules](https://github.com/ryanpacker/flight-rules) documentation framework
@@ -193,8 +193,9 @@ After scaffolding, you'll need to:
 ```
 r9stack/
 ├── src/                    # CLI source code
-├── starters/
-│   └── standard/           # r9-starter-standard source
+├── templates/
+│   ├── standard/           # r9-template-standard source
+│   └── auth/               # r9-template-auth source
 ├── tests/
 │   ├── e2e/               # End-to-end tests
 │   └── output/            # Test output (gitignored)
@@ -208,8 +209,8 @@ r9stack/
 ## Documentation
 
 - [Product Requirements](docs/prd.md)
-- [TanStack Starter System](docs/tanstack-start-starter-system.md)
-- [Starter Development Guide](docs/starter-development.md)
+- [TanStack Start Template System](docs/tanstack-start-starter-system.md)
+- [Template Development Guide](docs/template-development.md)
 - [Tech Stack](docs/tech-stack.md)
 
 ## License
