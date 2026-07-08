@@ -23,7 +23,7 @@
     "@workos-inc/node": "^7.79.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "convex": "^1.31.2",
+    "convex": "^1.42.0",
     "iron-session": "^8.0.4",
     "lucide-react": "^0.561.0",
     "nitro": "latest",

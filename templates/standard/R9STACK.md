@@ -259,6 +259,18 @@ These functions navigate to `/auth/sign-in` and `/auth/sign-out` respectively.
 
 [Convex](https://docs.convex.dev) is the backend and database layer. It provides real-time queries that automatically re-render components when data changes.
 
+> **⚠️ Security: the Convex data plane is public by default.** Your Convex
+> deployment URL ships in the client JS bundle, so anyone can call your public
+> functions directly. The app's login wall (route guards) does **not** protect
+> Convex data. The `messages` guestbook below is an intentionally public,
+> unauthenticated demo — do not store real data in it. For any real feature,
+> authenticate every public function: check `ctx.auth.getUserIdentity()` and
+> derive the caller's identity from the verified token, never from a
+> client-supplied argument (`workosId`, `email`, caller `userId`). The
+> `auth` template (`r9stack init --template auth`) ships the enforced pattern:
+> a two-provider `customJwt` config plus `authedQuery`/`authedMutation` wrapper
+> builders so identity can't be forged or forgotten.
+
 ### Schema
 
 The database schema is defined in `convex/schema.ts`:
