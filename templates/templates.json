@@ -11,7 +11,7 @@
       "id": "r9-template-auth",
       "name": "r9stack Auth",
       "description": "Full auth template with Convex-level authentication, WorkOS RBAC, and API access patterns — five auth demos included",
-      "version": "1.0.1",
+      "version": "2.0.0",
       "url": "https://raw.githubusercontent.com/ryanpacker/r9stack/main/templates/auth/template.json"
     }
   ]

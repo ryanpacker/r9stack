@@ -1,50 +1,56 @@
 /**
- * Convex Auth Configuration — Dual JWT Provider Setup
+ * Convex Auth Configuration — WorkOS AuthKit (dual customJwt).
  *
- * This is the most critical auth file in the entire project. It tells Convex
- * HOW to validate the JWT tokens that WorkOS issues.
+ * This is the most critical auth file in the project: it tells Convex how to
+ * validate the JWTs WorkOS issues, so `ctx.auth.getUserIdentity()` resolves.
  *
- * WHY TWO PROVIDERS?
- * WorkOS issues JWTs from different "issuers" depending on how the user logged in:
+ * TWO providers, because WorkOS uses a different `iss` per login method:
+ *   1. SSO / hosted AuthKit:     iss = https://api.workos.com/
+ *   2. User Management sessions:  iss = https://api.workos.com/user_management/<clientId>
+ * Both validate signatures against the same JWKS endpoint (RS256).
  *
- * 1. SSO login (enterprise SAML/OIDC):
- *    - Issuer: "https://api.workos.com/"
+ * Provider 1 sets `applicationID: clientId`, which requires the token's `aud`
+ * claim to equal the client id. Provider 2 omits it (its issuer is
+ * client-specific, so it is not on Convex's shared-issuer blocklist and does
+ * not need an aud check).
  *
- * 2. User Management login (email/password, social login, magic link):
- *    - Issuer: "https://api.workos.com/user_management/{clientId}"
- *
- * Both use the SAME JWKS endpoint (public keys) for signature verification,
- * but the `iss` claim in the JWT differs. We must list both so Convex can
- * validate tokens from either login method.
- *
- * HOW IT WORKS:
- * When ConvexProviderWithAuth sends a JWT with a function call, Convex:
- * 1. Reads the `iss` claim from the JWT
- * 2. Matches it against the providers listed here
- * 3. Fetches the public keys from the JWKS endpoint
- * 4. Verifies the JWT signature
- * 5. If valid, populates ctx.auth.getUserIdentity() with the token claims
- *
- * SETUP:
- * Replace YOUR_WORKOS_CLIENT_ID with your actual WorkOS Client ID.
- * You can find it in the WorkOS Dashboard under API Keys.
+ * ── REQUIRED SETUP (read this — auth silently fails otherwise) ──────────────
+ * • WORKOS_CLIENT_ID must be set ON THE CONVEX DEPLOYMENT, not just .env.local:
+ *     npx convex env set WORKOS_CLIENT_ID <client_id>
+ *     npx convex env set WORKOS_API_KEY  <api_key>
+ *   Convex evaluates this file on its own servers and does NOT read .env.local.
+ * • Real AuthKit access tokens carry no `aud` claim by default, so provider 1
+ *   won't match until you add an `aud` claim to the WorkOS Sessions JWT
+ *   template (Dashboard → Authentication → Sessions → Configure JWT Template),
+ *   set to your client id. Convex's zero-config AuthKit (convex.json `authKit`
+ *   block) does this automatically for dev on a Convex-managed WorkOS account;
+ *   a bring-your-own WorkOS team must set it manually. See the README.
  */
+import type { AuthConfig } from 'convex/server'
 
-const clientId = process.env.WORKOS_CLIENT_ID ?? 'WORKOS_CLIENT_ID_NOT_SET'
+const clientId = process.env.WORKOS_CLIENT_ID
+if (!clientId) {
+  throw new Error(
+    'WORKOS_CLIENT_ID is not set on the Convex deployment. Run ' +
+      '`npx convex env set WORKOS_CLIENT_ID <client_id>` — Convex does not ' +
+      'read .env.local.',
+  )
+}
 
 export default {
   providers: [
     {
-      // Provider 1: SSO-based authentication
-      // Validates JWTs issued when users log in via enterprise SSO (SAML/OIDC)
-      domain: 'https://api.workos.com',
-      applicationID: 'convex',
+      type: 'customJwt',
+      issuer: 'https://api.workos.com/',
+      algorithm: 'RS256',
+      jwks: `https://api.workos.com/sso/jwks/${clientId}`,
+      applicationID: clientId,
     },
     {
-      // Provider 2: User Management authentication
-      // Validates JWTs issued when users log in via email/password, social, or magic link
-      domain: `https://api.workos.com/user_management/${clientId}`,
-      applicationID: 'convex',
+      type: 'customJwt',
+      issuer: `https://api.workos.com/user_management/${clientId}`,
+      algorithm: 'RS256',
+      jwks: `https://api.workos.com/sso/jwks/${clientId}`,
     },
   ],
-}
+} satisfies AuthConfig

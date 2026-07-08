@@ -11,13 +11,15 @@
  *
  * Demo page: /app/demo/public-data
  *
- * IMPORTANT: The absence of ctx.auth.getUserIdentity() is a deliberate choice.
- * If you see a Convex function without an auth check, it means the developer
- * intentionally decided this data is public.
+ * IMPORTANT: `publicQuery`/`publicMutation` (from ./functions) are the raw
+ * builders under an explicit name. Using them — rather than the banned raw
+ * `query`/`mutation` — is a deliberate, greppable statement that "this data is
+ * public on purpose." If you see one, the developer chose to expose it.
  */
 
-import { query, mutation, internalQuery } from './_generated/server'
 import { v } from 'convex/values'
+import { internalQuery } from './_generated/server'
+import { publicMutation, publicQuery } from './functions'
 
 /**
  * List all announcements — PUBLIC, no auth required.
@@ -25,7 +27,7 @@ import { v } from 'convex/values'
  * This query is reactive: any component using useQuery(api.announcements.list)
  * will automatically re-render when announcements are added or removed.
  */
-export const list = query({
+export const list = publicQuery({
   args: {},
   handler: async (ctx) => {
     // No auth check — this is intentionally public.
@@ -41,20 +43,16 @@ export const list = query({
 /**
  * Create an announcement — PUBLIC for demo purposes.
  *
- * In a real app, you would likely add an auth check here to restrict
- * who can create announcements (e.g., only admins). We leave it public
- * in this demo so you can easily test the flow.
+ * In a real app you would gate this (e.g. authedMutation + an admin
+ * permission — see adminSettings.ts). We leave it public in this demo so you
+ * can test the flow without configuring RBAC.
  */
-export const create = mutation({
+export const create = publicMutation({
   args: {
     title: v.string(),
     content: v.string(),
   },
   handler: async (ctx, args) => {
-    // In production, you'd add an auth check here:
-    // const identity = await ctx.auth.getUserIdentity()
-    // if (!identity) throw new Error('Not authenticated')
-
     return await ctx.db.insert('announcements', {
       title: args.title,
       content: args.content,

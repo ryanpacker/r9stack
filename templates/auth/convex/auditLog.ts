@@ -22,8 +22,8 @@
  *   await ctx.runMutation(internal.auditLog.record, { ... })
  */
 
-import { internalMutation, internalQuery } from './_generated/server'
 import { v } from 'convex/values'
+import { internalMutation, internalQuery } from './_generated/server'
 
 /**
  * Record an audit log entry — INTERNAL ONLY.

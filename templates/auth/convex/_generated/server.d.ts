@@ -7,6 +7,9 @@ import type {
   MutationBuilder,
   ActionBuilder,
   HttpActionBuilder,
+  GenericQueryCtx,
+  GenericMutationCtx,
+  GenericActionCtx,
 } from "convex/server";
 import type { DataModel } from "./dataModel";
 
@@ -17,3 +20,7 @@ export declare const internalMutation: MutationBuilder<DataModel, "internal">;
 export declare const action: ActionBuilder<DataModel, "public">;
 export declare const internalAction: ActionBuilder<DataModel, "internal">;
 export declare const httpAction: HttpActionBuilder;
+
+export type QueryCtx = GenericQueryCtx<DataModel>;
+export type MutationCtx = GenericMutationCtx<DataModel>;
+export type ActionCtx = GenericActionCtx<DataModel>;

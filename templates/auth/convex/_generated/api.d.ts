@@ -1,40 +1,37 @@
-/* eslint-disable */
+ 
 /**
  * Generated API types - this file will be replaced when you run `npx convex dev`
  */
-import type { FilterApi, FunctionReference } from "convex/server";
+import type * as adminSettings from "../adminSettings.js";
+import type * as announcements from "../announcements.js";
+import type * as auditLog from "../auditLog.js";
+import type * as auditLogReader from "../auditLogReader.js";
+import type * as functions from "../functions.js";
+import type * as http from "../http.js";
+import type * as notes from "../notes.js";
+import type * as users from "../users.js";
 
-export declare const api: {
-  adminSettings: {
-    checkPermissions: FunctionReference<"query", "public", Record<string, never>, any>;
-    list: FunctionReference<"query", "public", Record<string, never>, any>;
-    update: FunctionReference<"mutation", "public", { key: string; value: string }, any>;
-  };
-  announcements: {
-    create: FunctionReference<"mutation", "public", { title: string; content: string }, any>;
-    list: FunctionReference<"query", "public", Record<string, never>, any>;
-  };
-  auditLogReader: {
-    listRecent: FunctionReference<"query", "public", Record<string, never>, any>;
-  };
-  notes: {
-    create: FunctionReference<"mutation", "public", { title: string; content: string }, any>;
-    getMyIdentity: FunctionReference<"query", "public", Record<string, never>, any>;
-    list: FunctionReference<"query", "public", Record<string, never>, any>;
-    remove: FunctionReference<"mutation", "public", { noteId: any }, any>;
-  };
-  users: {
-    getByWorkosId: FunctionReference<"query", "public", { workosId: string }, any>;
-    me: FunctionReference<"query", "public", Record<string, never>, any>;
-    upsertFromIdentity: FunctionReference<"mutation", "public", Record<string, never>, any>;
-  };
-};
-export declare const internal: FilterApi<{
-  announcements: {
-    listInternal: FunctionReference<"query", "internal", Record<string, never>, any>;
-  };
-  auditLog: {
-    listAll: FunctionReference<"query", "internal", Record<string, never>, any>;
-    record: FunctionReference<"mutation", "internal", { action: string; userId: string; details?: string }, any>;
-  };
-}, "internal">;
+import type {
+  ApiFromModules,
+  FilterApi,
+  FunctionReference,
+} from "convex/server";
+
+declare const fullApi: ApiFromModules<{
+  adminSettings: typeof adminSettings;
+  announcements: typeof announcements;
+  auditLog: typeof auditLog;
+  auditLogReader: typeof auditLogReader;
+  functions: typeof functions;
+  http: typeof http;
+  notes: typeof notes;
+  users: typeof users;
+}>;
+export declare const api: FilterApi<
+  typeof fullApi,
+  FunctionReference<any, "public">
+>;
+export declare const internal: FilterApi<
+  typeof fullApi,
+  FunctionReference<any, "internal">
+>;
