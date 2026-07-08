@@ -1,16 +1,2 @@
-// Types for authentication
-
-export interface User {
-  id: string
-  email: string
-  firstName: string | null
-  lastName: string | null
-  profilePictureUrl: string | null
-}
-
-export interface SessionData {
-  user?: User
-  accessToken?: string
-  refreshToken?: string
-  expiresAt?: number
-}
+// Auth types — the User shape comes from the WorkOS AuthKit SDK.
+export type { User } from '@workos/authkit-tanstack-react-start'

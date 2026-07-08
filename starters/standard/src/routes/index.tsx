@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { useAuth } from '../lib/auth-client'
 import { Button } from '../components/ui/button'
 
@@ -32,10 +32,10 @@ function LandingPage() {
               </Link>
             ) : (
               <>
-                <Button variant="ghost" onClick={signIn}>
+                <Button variant="ghost" onClick={() => signIn()}>
                   Sign In
                 </Button>
-                <Button onClick={signIn}>Get Started</Button>
+                <Button onClick={() => signIn()}>Get Started</Button>
               </>
             )}
           </div>
@@ -64,10 +64,10 @@ function LandingPage() {
               </Link>
             ) : (
               <>
-                <Button size="lg" className="px-8" onClick={signIn}>
+                <Button size="lg" className="px-8" onClick={() => signIn()}>
                   Get Started Free
                 </Button>
-                <Button size="lg" variant="outline" onClick={signIn}>
+                <Button size="lg" variant="outline" onClick={() => signIn()}>
                   Sign In
                 </Button>
               </>

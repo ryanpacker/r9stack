@@ -83,10 +83,36 @@ Projects created by r9stack use:
 | Frontend | React | 19.x |
 | Meta-framework | TanStack Start | 1.x |
 | Backend/Database | Convex | 1.x |
-| Auth | WorkOS AuthKit | 7.x |
-| Sessions | iron-session | 8.x |
+| Auth | WorkOS AuthKit (`@workos/authkit-tanstack-react-start`) | 0.8.x |
+| Convex auth helpers | convex-helpers | 0.1.x |
 | Styling | Tailwind CSS | 4.x |
 | Component Library | shadcn/ui | — |
+
+### Generated Project Auth Architecture
+
+The Convex data plane is authenticated end to end (backported from the
+mission-control security fix, July 2026):
+
+1. **Convex validates WorkOS JWTs** — `convex/auth.config.ts` defines two
+   `customJwt` providers (WorkOS SSO and AuthKit user-management issuers)
+   against the WorkOS JWKS.
+2. **Wrapper builders inject verified identity** — `convex/functions.ts`
+   provides `authedQuery` / `authedMutation` / `requireActionUser`, which
+   resolve the JWT subject to a `users` row and expose it as `ctx.user`.
+   Public functions never take caller-identity args.
+3. **The official AuthKit SDK replaces iron-session** — middleware in
+   `src/start.ts`, PKCE sign-in/callback/sign-out routes, and a
+   `ConvexProviderWithAuth` bridge that pushes the access token into the
+   Convex websocket. `users.ensureUser` provisions users server-side.
+
+Three manual setup steps per generated project (documented in the starter
+README): `npx convex env set WORKOS_CLIENT_ID/WORKOS_API_KEY` (Convex does
+not read `.env`), WorkOS dashboard redirect registrations (login callback +
+sign-out redirect), and a 32+ char `WORKOS_COOKIE_PASSWORD`.
+
+**AuthKit SDK version pin:** SDK 0.9.0+ requires `@tanstack/react-start >=
+1.168.25`; the starter is on `^1.132.0`, so the SDK is pinned to `^0.8.2`.
+Take the SDK upgrade together with a TanStack Start upgrade, not separately.
 
 ---
 

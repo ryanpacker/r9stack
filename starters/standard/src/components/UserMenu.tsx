@@ -1,5 +1,5 @@
-import { ChevronUp, User, LogOut } from 'lucide-react'
-import { useState, useRef, useEffect } from 'react'
+import { ChevronUp, LogOut } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { cn } from '../lib/utils'
 import { useAuth } from '../lib/auth-client'
 
@@ -24,8 +24,9 @@ export function UserMenu({ collapsed }: UserMenuProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const displayName = user?.firstName || user?.email?.split('@')[0] || 'User'
-  const initials = user?.firstName?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U'
+  const displayName = user?.firstName || user?.email.split('@')[0] || 'User'
+  const initials =
+    user?.firstName?.[0]?.toUpperCase() || user?.email[0]?.toUpperCase() || 'U'
 
   return (
     <div className="relative" ref={menuRef}>
@@ -35,7 +36,7 @@ export function UserMenu({ collapsed }: UserMenuProps) {
           'flex items-center gap-3 w-full p-3 rounded-md',
           'hover:bg-sidebar-accent transition-colors',
           'text-sidebar-foreground',
-          collapsed && 'justify-center'
+          collapsed && 'justify-center',
         )}
       >
         <div className="flex-shrink-0 w-8 h-8 rounded-full bg-sidebar-primary flex items-center justify-center overflow-hidden">
@@ -62,7 +63,7 @@ export function UserMenu({ collapsed }: UserMenuProps) {
             <ChevronUp
               className={cn(
                 'w-4 h-4 text-sidebar-foreground/50 transition-transform',
-                isOpen && 'rotate-180'
+                isOpen && 'rotate-180',
               )}
             />
           </>
@@ -74,13 +75,13 @@ export function UserMenu({ collapsed }: UserMenuProps) {
         <div
           className={cn(
             'absolute bottom-full mb-2 bg-popover border border-border rounded-lg shadow-lg py-1 min-w-[200px]',
-            collapsed ? 'left-full ml-2' : 'left-0 right-0'
+            collapsed ? 'left-full ml-2' : 'left-0 right-0',
           )}
         >
           {/* User info header */}
           <div className="px-3 py-2 border-b border-border">
             <p className="text-sm font-medium text-foreground truncate">
-              {user?.firstName && user?.lastName
+              {user?.firstName && user.lastName
                 ? `${user.firstName} ${user.lastName}`
                 : displayName}
             </p>

@@ -2,8 +2,9 @@ import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
 
 export default defineSchema({
-  // Demo messages table
+  // Demo messages table — every message is attributed to its author
   messages: defineTable({
+    userId: v.id('users'),
     text: v.string(),
     createdAt: v.number(),
   }).index('by_created_at', ['createdAt']),

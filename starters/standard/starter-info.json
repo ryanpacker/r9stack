@@ -1,7 +1,7 @@
 {
   "id": "r9-starter-standard",
   "name": "r9stack Standard Starter",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Full-featured starter with TanStack Start, Convex, WorkOS authentication, and shadcn/ui",
   "author": "r9stack <hello@r9stack.dev>",
   "license": "Apache-2.0",
@@ -15,19 +15,14 @@
   "packageAdditions": {
     "dependencies": {
       "@fontsource-variable/inter": "^5.2.8",
-      "@workos-inc/node": "^7.79.3",
+      "@workos/authkit-tanstack-react-start": "^0.8.2",
       "convex": "^1.31.2",
-      "iron-session": "^8.0.4",
+      "convex-helpers": "^0.1.114",
       "radix-ui": "^1.4.3",
       "shadcn": "^3.6.2"
     }
   },
-  "dependsOn": [
-    "start",
-    "shadcn",
-    "eslint",
-    "nitro"
-  ],
+  "dependsOn": ["start", "shadcn", "eslint", "nitro"],
   "typescript": true,
   "tailwind": true
 }

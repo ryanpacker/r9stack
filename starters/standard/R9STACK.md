@@ -8,18 +8,18 @@ The sections below describe the architecture, conventions, and patterns used thr
 
 ## Tech Stack
 
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| Framework | [TanStack Start](https://tanstack.com/start) | Full-stack React framework with SSR and file-based routing |
-| UI | [React 19](https://react.dev) | Component rendering |
-| Routing | [TanStack Router](https://tanstack.com/router) | Type-safe file-based routing |
-| Backend & Database | [Convex](https://convex.dev) | Real-time backend with automatic subscriptions |
-| Authentication | [WorkOS AuthKit](https://workos.com/docs/user-management) | SSO-ready authentication |
-| Sessions | [iron-session](https://github.com/vvo/iron-session) | Encrypted cookie-based sessions |
-| Styling | [Tailwind CSS 4](https://tailwindcss.com) | Utility-first CSS |
-| Components | [shadcn/ui](https://ui.shadcn.com) | Copy-paste component library built on Radix UI |
-| Icons | [Lucide React](https://lucide.dev) | Icon library |
-| Build | [Vite](https://vite.dev) | Dev server and bundler |
+| Layer              | Technology                                                                                                                                                     | Purpose                                                     |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| Framework          | [TanStack Start](https://tanstack.com/start)                                                                                                                   | Full-stack React framework with SSR and file-based routing  |
+| UI                 | [React 19](https://react.dev)                                                                                                                                  | Component rendering                                         |
+| Routing            | [TanStack Router](https://tanstack.com/router)                                                                                                                 | Type-safe file-based routing                                |
+| Backend & Database | [Convex](https://convex.dev)                                                                                                                                   | Real-time backend with automatic subscriptions              |
+| Authentication     | [WorkOS AuthKit](https://workos.com/docs/user-management) via [`@workos/authkit-tanstack-react-start`](https://github.com/workos/authkit-tanstack-react-start) | PKCE sign-in flow, session cookies, JWT access tokens       |
+| Auth helpers       | [convex-helpers](https://github.com/get-convex/convex-helpers)                                                                                                 | Custom function builders (`authedQuery` / `authedMutation`) |
+| Styling            | [Tailwind CSS 4](https://tailwindcss.com)                                                                                                                      | Utility-first CSS                                           |
+| Components         | [shadcn/ui](https://ui.shadcn.com)                                                                                                                             | Copy-paste component library built on Radix UI              |
+| Icons              | [Lucide React](https://lucide.dev)                                                                                                                             | Icon library                                                |
+| Build              | [Vite](https://vite.dev)                                                                                                                                       | Dev server and bundler                                      |
 
 ---
 
@@ -28,25 +28,25 @@ The sections below describe the architecture, conventions, and patterns used thr
 The application has three layers:
 
 ```
-┌─────────────────────────────────────────────┐
-│  TanStack Start (Frontend + Server Functions)│
-│  React 19 · File-based routing · SSR        │
-│  Auth via server functions + iron-session    │
-├─────────────────────────────────────────────┤
-│  Convex (Backend + Database)                │
-│  Real-time queries · Mutations · Schema     │
-│  Accessed via React hooks (useQuery, etc.)  │
-├─────────────────────────────────────────────┤
-│  WorkOS (Authentication Provider)           │
-│  OAuth flow · User management · SSO         │
-│  Integrated via server-side SDK             │
-└─────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────┐
+│  TanStack Start (Frontend + Server Routes)       │
+│  React 19 · File-based routing · SSR             │
+│  AuthKit SDK middleware + PKCE sign-in routes    │
+├──────────────────────────────────────────────────┤
+│  Convex (Backend + Database)                     │
+│  Validates WorkOS JWTs (auth.config.ts)          │
+│  authedQuery/authedMutation inject ctx.user      │
+├──────────────────────────────────────────────────┤
+│  WorkOS (Authentication Provider)                │
+│  AuthKit hosted login · JWKS · User management   │
+└──────────────────────────────────────────────────┘
 ```
 
 **Key architectural decisions:**
-- Authentication is handled entirely server-side through TanStack Start server functions. The client receives auth state via a React context.
-- Convex replaces a traditional REST/GraphQL API layer. There are no API routes. All data access goes through Convex queries and mutations.
-- Server functions (`createServerFn`) run on the server within TanStack Start. They are used for auth operations, not for data access (that's Convex's job).
+
+- **The Convex data plane is authenticated.** The Convex deployment URL ships in the client JS bundle, so anyone can call public functions directly — route guards in the web app protect nothing at the data layer. Every public Convex function therefore validates the caller's WorkOS JWT itself and derives identity from the verified token, never from client-supplied arguments.
+- Authentication uses the official WorkOS AuthKit SDK (`@workos/authkit-tanstack-react-start`): request middleware in `src/start.ts`, PKCE sign-in/callback/sign-out routes, and client hooks. The SDK's access token is pushed into the Convex websocket via `ConvexProviderWithAuth`.
+- Convex replaces a traditional REST/GraphQL API layer. There are no API routes. All data access goes through Convex queries, mutations, and actions.
 
 ---
 
@@ -54,21 +54,22 @@ The application has three layers:
 
 ```
 src/
+├── start.ts                 # createStart with authkitMiddleware() — SDK session handling
 ├── routes/                  # File-based routing (TanStack Router)
-│   ├── __root.tsx           # Root layout — providers, meta tags, global styles
+│   ├── __root.tsx           # Root layout — AuthKitProvider, ConvexClientProvider, meta tags
 │   ├── index.tsx            # Public landing page (/)
 │   ├── auth/
-│   │   ├── sign-in.tsx      # Redirects to WorkOS sign-in
-│   │   ├── callback.tsx     # Handles OAuth callback, creates session
-│   │   └── sign-out.tsx     # Destroys session, redirects to /
+│   │   ├── sign-in.tsx      # Redirects to WorkOS via SDK getSignInUrl (sets PKCE cookie)
+│   │   ├── callback.tsx     # SDK handleCallbackRoute — completes the PKCE exchange
+│   │   ├── sign-out.tsx     # SDK signOut — revokes the WorkOS session, absolute returnTo
+│   │   └── unauthorized.tsx # Shown when server-side provisioning rejects the account
 │   └── app/
-│       ├── route.tsx        # Auth guard + app shell layout for all /app/* routes
+│       ├── route.tsx        # Auth guard (getAuth) + EnsureProvisioned gate + app shell
 │       ├── index.tsx        # App home page (/app)
 │       └── demo/
 │           └── convex.messages.tsx  # Convex demo (/app/demo/convex/messages)
 ├── components/
-│   ├── AuthProvider.tsx     # Auth context provider — hydrates user on mount
-│   ├── ConvexClientProvider.tsx  # Convex client setup (client-side only)
+│   ├── ConvexClientProvider.tsx  # ConvexProviderWithAuth — bridges the AuthKit JWT to Convex
 │   ├── AppShell.tsx         # App layout with collapsible sidebar
 │   ├── Sidebar.tsx          # Navigation sidebar
 │   ├── NavGroup.tsx         # Collapsible nav section
@@ -76,16 +77,17 @@ src/
 │   ├── UserMenu.tsx         # User profile dropdown with sign-out
 │   └── ui/                  # shadcn/ui components (add more with `npx shadcn add`)
 ├── lib/
-│   ├── auth.ts              # Auth type definitions (User, SessionData)
-│   ├── auth-client.ts       # useAuth() hook, AuthContext, signIn/signOut helpers
-│   ├── auth-server.ts       # Server functions: getAuthUrl, getCurrentUser, handleAuthCallback, signOutServer
+│   ├── auth.ts              # Re-exports the SDK User type
+│   ├── auth-client.ts       # useAuth() hook and signIn helper (wraps the AuthKit SDK)
 │   └── utils.ts             # cn() utility (clsx + tailwind-merge)
 └── styles.css               # Tailwind config, CSS variables, theme tokens
 
 convex/
 ├── schema.ts                # Database schema (tables, indexes)
-├── messages.ts              # Message queries and mutations (demo)
-└── auth.config.ts           # Auth config placeholder
+├── auth.config.ts           # WorkOS JWT validation (dual customJwt providers)
+├── functions.ts             # authedQuery / authedMutation / requireActionUser wrappers
+├── users.ts                 # ensureUser provisioning action + getCurrent query
+└── messages.ts              # Message queries and mutations (demo of the authed pattern)
 
 .env                         # Environment variables (never commit)
 ```
@@ -116,12 +118,19 @@ Required in `.env`:
 WORKOS_CLIENT_ID=client_xxx          # From WorkOS Dashboard > API Keys
 WORKOS_API_KEY=sk_xxx                # From WorkOS Dashboard > API Keys
 WORKOS_REDIRECT_URI=http://localhost:3000/auth/callback
-WORKOS_COOKIE_PASSWORD=<32+ chars>   # Any random string, used to encrypt session cookies
+WORKOS_COOKIE_PASSWORD=<32+ chars>   # openssl rand -base64 24
 
 VITE_CONVEX_URL=https://xxx.convex.cloud  # Set automatically by `npx convex dev`
 ```
 
-Note: `VITE_CONVEX_URL` is set automatically when you run `npx convex dev` for the first time. The `WORKOS_*` variables must be configured manually from the [WorkOS Dashboard](https://dashboard.workos.com).
+**The Convex deployment needs its own copies of the WorkOS variables** — `convex/auth.config.ts` (JWT validation) and `users.ensureUser` (provisioning) run on Convex's servers, which do not read `.env`:
+
+```bash
+npx convex env set WORKOS_CLIENT_ID client_xxx
+npx convex env set WORKOS_API_KEY sk_xxx
+```
+
+If you skip this, every Convex call fails with `Unauthenticated` even after signing in. See the README's "One-Time Auth Setup" for the full checklist (including the WorkOS dashboard redirect registrations).
 
 ---
 
@@ -129,10 +138,10 @@ Note: `VITE_CONVEX_URL` is set automatically when you run `npx convex dev` for t
 
 Routes use **TanStack Router's file-based routing**. The file path determines the URL:
 
-| File | URL | Purpose |
-|------|-----|---------|
-| `src/routes/index.tsx` | `/` | Public landing page |
-| `src/routes/app/index.tsx` | `/app` | App home (protected) |
+| File                                      | URL                         | Purpose               |
+| ----------------------------------------- | --------------------------- | --------------------- |
+| `src/routes/index.tsx`                    | `/`                         | Public landing page   |
+| `src/routes/app/index.tsx`                | `/app`                      | App home (protected)  |
 | `src/routes/app/demo/convex.messages.tsx` | `/app/demo/convex/messages` | Demo page (protected) |
 
 ### Route conventions
@@ -191,19 +200,23 @@ function PricingPage() {
 
 ## Authentication
 
-Authentication uses WorkOS AuthKit for the OAuth flow and iron-session for encrypted cookie-based sessions.
+Authentication uses the official WorkOS AuthKit SDK for TanStack Start (`@workos/authkit-tanstack-react-start`). The SDK owns the session cookie, the PKCE flow, and token refresh; Convex validates the SDK's access token (a WorkOS-issued JWT) on every function call.
 
 ### How the auth flow works
 
 1. User clicks "Sign In" → navigates to `/auth/sign-in`
-2. `/auth/sign-in` calls `getAuthUrl()` server function → redirects to WorkOS hosted sign-in page
-3. After sign-in, WorkOS redirects to `/auth/callback?code=xxx`
-4. `/auth/callback` calls `handleAuthCallback()` → exchanges code for tokens, creates encrypted session cookie
-5. User is redirected to `/app`
+2. `/auth/sign-in` redirects to the WorkOS hosted login via the SDK's `getSignInUrl()`. **Sign-in must always start here** — this step sets the PKCE verifier cookie the callback requires.
+3. After sign-in, WorkOS redirects to `/auth/callback?code=xxx`, handled by the SDK's `handleCallbackRoute` (code exchange + session cookie), then redirects to `/app`
+4. The app-layout gate (`EnsureProvisioned` in `src/routes/app/route.tsx`) calls the zero-argument `users.ensureUser` action, which fetches the user's profile **server-side from the WorkOS API** and creates/refreshes their `users` row in Convex
+5. `ConvexClientProvider` pushes the SDK's access token into the Convex websocket, so every Convex function sees the verified identity via `ctx.auth.getUserIdentity()`
 
 ### How the auth guard works
 
-`src/routes/app/route.tsx` has a `beforeLoad` hook that calls `getCurrentUser()`. If no session exists, the user is redirected to `/`. All routes under `/app/` inherit this guard automatically.
+`src/routes/app/route.tsx` has a `beforeLoad` hook that calls the SDK's `getAuth()`. If no session exists, the user is redirected to `/auth/sign-in`. All routes under `/app/` inherit this guard automatically. The guard controls page access only — data access is independently enforced by Convex (see below).
+
+### Sign-out
+
+Sign-out (`/auth/sign-out`) uses the SDK's `signOut({ returnTo })`, which clears the cookie **and revokes the WorkOS session server-side** — without revocation, the next sign-in silently reuses the old session. `returnTo` must be an **absolute URL matching a Sign-out redirect registered in the WorkOS dashboard**, which is why sign-out runs client-side where the origin is known.
 
 ### Accessing the authenticated user
 
@@ -222,17 +235,9 @@ function MyComponent() {
 }
 ```
 
-The `user` object has this shape:
+The `user` object is the WorkOS AuthKit `User` (re-exported from `src/lib/auth.ts`): `id`, `email`, `firstName`, `lastName`, `profilePictureUrl`, etc.
 
-```typescript
-interface User {
-  id: string
-  email: string
-  firstName: string | null
-  lastName: string | null
-  profilePictureUrl: string | null
-}
-```
+Inside Convex functions, the authenticated caller's `users` row is `ctx.user` (see the next section) — use that, not client-passed identity.
 
 ### Sign in and sign out
 
@@ -244,20 +249,34 @@ function MyComponent() {
 
   return (
     <>
-      <button onClick={signIn}>Sign In</button>
-      <button onClick={signOut}>Sign Out</button>
+      <button onClick={() => signIn()}>Sign In</button>
+      <button onClick={() => signOut()}>Sign Out</button>
     </>
   )
 }
 ```
 
-These functions navigate to `/auth/sign-in` and `/auth/sign-out` respectively.
+`signIn` navigates to `/auth/sign-in` (pass `'sign-up'` to show the registration screen); `signOut` revokes the session and returns to the origin.
+
+### Restricting sign-ups (optional)
+
+`convex/users.ts` has an `ALLOWED_EMAIL_DOMAINS` template hook. Leave it empty to allow anyone; list domains (e.g. `['yourcompany.com']`) to restrict sign-up to those email domains, enforced server-side during provisioning. Rejected users land on `/auth/unauthorized`.
 
 ---
 
 ## Convex Backend
 
 [Convex](https://docs.convex.dev) is the backend and database layer. It provides real-time queries that automatically re-render components when data changes.
+
+### The security rule (read this before writing any Convex function)
+
+The Convex function API is reachable by anyone with the deployment URL, which ships in the client bundle. So:
+
+- **Public queries and mutations use `authedQuery` / `authedMutation` from `convex/functions.ts`** — never the raw `query` / `mutation` builders from `_generated/server`. The wrappers reject unauthenticated callers and inject the verified caller's `users` row as `ctx.user`.
+- **Public actions call `requireActionUser(ctx)`** at the top of the handler.
+- **Never accept caller identity as an argument** (`workosId`, `email`, caller `userId`) — arguments are forgeable. The caller is always `ctx.user`.
+- **Seeds, migrations, and crons use `internalQuery` / `internalMutation` / `internalAction`**, which are not exposed on the public API.
+- The one exception is `users.ensureUser`, which provisions the `users` row at login and performs its own JWT check.
 
 ### Schema
 
@@ -269,6 +288,7 @@ import { v } from 'convex/values'
 
 export default defineSchema({
   messages: defineTable({
+    userId: v.id('users'),
     text: v.string(),
     createdAt: v.number(),
   }).index('by_created_at', ['createdAt']),
@@ -289,14 +309,16 @@ export default defineSchema({
 
 ### Reading data (queries)
 
-Define a query in `convex/`:
+Define a query in `convex/` using the authed wrapper:
 
 ```typescript
 // convex/messages.ts
-import { query } from './_generated/server'
+import { authedQuery } from './functions'
 
-export const list = query({
+export const list = authedQuery({
+  args: {},
   handler: async (ctx) => {
+    // ctx.user is the verified caller — available in every authed function
     return await ctx.db
       .query('messages')
       .withIndex('by_created_at')
@@ -331,17 +353,18 @@ function MessageList() {
 
 ### Writing data (mutations)
 
-Define a mutation in `convex/`:
+Define a mutation using the authed wrapper, attributing writes to `ctx.user`:
 
 ```typescript
 // convex/messages.ts
-import { mutation } from './_generated/server'
 import { v } from 'convex/values'
+import { authedMutation } from './functions'
 
-export const send = mutation({
+export const send = authedMutation({
   args: { text: v.string() },
   handler: async (ctx, args) => {
     await ctx.db.insert('messages', {
+      userId: ctx.user._id, // the verified caller — never a client arg
       text: args.text,
       createdAt: Date.now(),
     })
@@ -366,10 +389,28 @@ function SendMessage() {
 }
 ```
 
+### Actions
+
+Actions (for calling external APIs) authenticate with `requireActionUser`:
+
+```typescript
+// convex/myActions.ts
+import { action } from './_generated/server'
+import { requireActionUser } from './functions'
+
+export const doSomething = action({
+  args: {},
+  handler: async (ctx) => {
+    const user = await requireActionUser(ctx)
+    // ... call external services as `user`
+  },
+})
+```
+
 ### Adding a new table
 
 1. Add the table definition to `convex/schema.ts`
-2. Create a new file in `convex/` for its queries and mutations
+2. Create a new file in `convex/` for its queries and mutations — public functions via `authedQuery` / `authedMutation`
 3. Run `npx convex dev` (if not already running) — it auto-syncs schema changes
 
 ### Path alias for Convex imports
@@ -415,7 +456,9 @@ Use them like:
 ```tsx
 import { Button } from '@/components/ui/button'
 
-<Button variant="outline" size="sm">Click me</Button>
+;<Button variant="outline" size="sm">
+  Click me
+</Button>
 ```
 
 Available button variants: `default`, `outline`, `secondary`, `ghost`, `destructive`, `link`.
@@ -427,7 +470,12 @@ Use `cn()` to conditionally combine class names:
 ```tsx
 import { cn } from '@/lib/utils'
 
-<div className={cn('p-4 rounded-lg', isActive && 'bg-primary text-primary-foreground')} />
+;<div
+  className={cn(
+    'p-4 rounded-lg',
+    isActive && 'bg-primary text-primary-foreground',
+  )}
+/>
 ```
 
 ### Path aliases
@@ -457,25 +505,13 @@ The application layout uses `AppShell` with a collapsible `Sidebar`. To add navi
 
 ---
 
-## Server Functions
-
-TanStack Start server functions run on the server and are called from route loaders or client code. They are defined with `createServerFn`:
-
-```typescript
-import { createServerFn } from '@tanstack/react-start/server'
-
-const myServerFn = createServerFn({ method: 'GET' })
-  .handler(async () => {
-    // Runs on the server
-    return { data: 'hello' }
-  })
-```
-
-In this project, server functions are used **only for authentication** (`src/lib/auth-server.ts`). Data access should go through Convex, not server functions.
-
----
-
 ## Common Mistakes to Avoid
+
+**Don't use the raw `query` / `mutation` builders for public functions.**
+Public Convex functions are callable by anyone with the deployment URL. Always use `authedQuery` / `authedMutation` from `convex/functions.ts` (or `requireActionUser` in actions). Reserve the raw builders' internal variants (`internalQuery`, `internalMutation`, `internalAction`) for seeds, migrations, and crons.
+
+**Don't pass caller identity as a function argument.**
+`workosId`, `email`, or caller-`userId` args can be forged by any caller. The verified caller is always `ctx.user` inside authed functions.
 
 **Don't use `fetch()` or API routes for data access.**
 Convex replaces the traditional API layer. Use `useQuery` and `useMutation` from `convex/react` instead. There are no REST endpoints to call.
@@ -483,11 +519,11 @@ Convex replaces the traditional API layer. Use `useQuery` and `useMutation` from
 **Don't use `useEffect` for data fetching.**
 Convex's `useQuery` hook handles data fetching and real-time subscriptions automatically. Using `useEffect` + `fetch` bypasses Convex's reactivity.
 
-**Don't import `auth-server.ts` in client components.**
-The server auth module (`src/lib/auth-server.ts`) uses Node.js APIs and server-only packages. Use `useAuth()` from `auth-client.ts` for client-side auth state.
+**Don't hand-roll the sign-in redirect.**
+Sign-in must start at `/auth/sign-in`, which uses the SDK's `getSignInUrl()` to set the PKCE verifier cookie. A hand-built WorkOS authorization URL will fail at the callback.
 
-**Don't confuse server functions with Next.js server actions.**
-TanStack Start uses `createServerFn`, not `"use server"`. The syntax and behavior differ.
+**Don't use a relative `returnTo` on sign-out.**
+WorkOS requires an absolute URL matching a Sign-out redirect registered in the dashboard; a relative one strands users on an AuthKit error page.
 
 **Don't manually refetch Convex queries.**
 Convex queries are live subscriptions. When a mutation changes data, all related queries automatically update. There's no need for `refetch()`, `invalidateQueries()`, or cache management.
@@ -495,20 +531,27 @@ Convex queries are live subscriptions. When a mutation changes data, all related
 **Don't put protected pages outside of `src/routes/app/`.**
 The auth guard only covers routes under `/app/`. A route at `src/routes/dashboard.tsx` would be publicly accessible.
 
+**Don't forget the Convex deployment env vars.**
+`npx convex env set WORKOS_CLIENT_ID ...` and `npx convex env set WORKOS_API_KEY ...` are required — Convex does not read `.env`.
+
 ---
 
 ## Key Files Reference
 
-| File | Purpose |
-|------|---------|
-| `src/routes/__root.tsx` | Root layout, providers, meta tags |
-| `src/routes/app/route.tsx` | Auth guard and app shell layout |
-| `src/lib/auth-server.ts` | Server-side auth functions (do not import on client) |
-| `src/lib/auth-client.ts` | `useAuth()` hook and auth context |
-| `src/lib/auth.ts` | User and session type definitions |
-| `src/components/Sidebar.tsx` | Navigation — edit this to add nav items |
-| `src/components/ui/` | shadcn/ui components — add more with `npx shadcn add` |
-| `convex/schema.ts` | Database schema — add tables here |
-| `src/styles.css` | Theme tokens and CSS variables |
-| `components.json` | shadcn/ui configuration |
-| `.env` | Environment variables (never commit) |
+| File                                      | Purpose                                                                               |
+| ----------------------------------------- | ------------------------------------------------------------------------------------- |
+| `src/start.ts`                            | AuthKit request middleware (SDK session handling)                                     |
+| `src/routes/__root.tsx`                   | Root layout, AuthKitProvider + ConvexClientProvider, meta tags                        |
+| `src/routes/app/route.tsx`                | Auth guard, provisioning gate, and app shell layout                                   |
+| `src/lib/auth-client.ts`                  | `useAuth()` hook and `signIn` helper                                                  |
+| `src/lib/auth.ts`                         | Re-export of the SDK `User` type                                                      |
+| `src/components/ConvexClientProvider.tsx` | Bridges the AuthKit access token into Convex                                          |
+| `src/components/Sidebar.tsx`              | Navigation — edit this to add nav items                                               |
+| `src/components/ui/`                      | shadcn/ui components — add more with `npx shadcn add`                                 |
+| `convex/auth.config.ts`                   | Convex-side WorkOS JWT validation                                                     |
+| `convex/functions.ts`                     | `authedQuery` / `authedMutation` / `requireActionUser` — use for all public functions |
+| `convex/users.ts`                         | Login-time provisioning (`ensureUser`) + optional email-domain restriction            |
+| `convex/schema.ts`                        | Database schema — add tables here                                                     |
+| `src/styles.css`                          | Theme tokens and CSS variables                                                        |
+| `components.json`                         | shadcn/ui configuration                                                               |
+| `.env`                                    | Environment variables (never commit)                                                  |

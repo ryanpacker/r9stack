@@ -1,10 +1,20 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { getAuthUrl } from '../../lib/auth-server'
+import {
+  getSignInUrl,
+  getSignUpUrl,
+} from '@workos/authkit-tanstack-react-start'
 
 export const Route = createFileRoute('/auth/sign-in')({
-  beforeLoad: async () => {
-    // Get the authorization URL and redirect to WorkOS
-    const authUrl = await getAuthUrl()
+  validateSearch: (search: Record<string, unknown>) => ({
+    screen_hint: search.screen_hint as 'sign-up' | 'sign-in' | undefined,
+  }),
+  beforeLoad: async ({ search }) => {
+    // The SDK's sign-in URL sets the PKCE verifier cookie the callback
+    // requires — sign-in must always start here.
+    const authUrl =
+      search.screen_hint === 'sign-up'
+        ? await getSignUpUrl()
+        : await getSignInUrl()
     throw redirect({ href: authUrl })
   },
   component: SignInPage,
@@ -21,4 +31,3 @@ function SignInPage() {
     </div>
   )
 }
-

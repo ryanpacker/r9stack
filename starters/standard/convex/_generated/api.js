@@ -2,13 +2,7 @@
 /**
  * Generated API - this file will be replaced when you run `npx convex dev`
  */
+import { anyApi } from 'convex/server'
 
-export const api = {
-  messages: {
-    list: "messages:list",
-    send: "messages:send",
-  },
-};
-
-export const internal = {};
-
+export const api = anyApi
+export const internal = anyApi

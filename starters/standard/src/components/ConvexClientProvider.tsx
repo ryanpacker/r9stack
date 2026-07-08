@@ -1,27 +1,48 @@
-import { ConvexProvider, ConvexReactClient } from "convex/react";
-import { ReactNode, useEffect, useState } from "react";
+import { ConvexProviderWithAuth, ConvexReactClient } from 'convex/react'
+import { useCallback, useState } from 'react'
+import {
+  useAccessToken,
+  useAuth,
+} from '@workos/authkit-tanstack-react-start/client'
+import type { ReactNode } from 'react'
 
 /**
- * ConvexClientProvider wraps the app with ConvexProvider.
- * It handles SSR by only rendering the provider on the client side.
+ * Bridges the WorkOS AuthKit session into the shape ConvexProviderWithAuth
+ * expects ({ isLoading, isAuthenticated, fetchAccessToken }) so Convex
+ * functions can validate the JWT via ctx.auth.getUserIdentity().
  */
-export function ConvexClientProvider({ children }: { children: ReactNode }) {
-  const [client, setClient] = useState<ConvexReactClient | null>(null);
+function useAuthFromAuthKit() {
+  const { user, loading: isLoading } = useAuth()
+  const { getAccessToken, refresh } = useAccessToken()
 
-  useEffect(() => {
-    // Only create the client on the client side
-    // Vite exposes env vars prefixed with VITE_
-    const convexUrl = import.meta.env.VITE_CONVEX_URL as string;
-    if (convexUrl) {
-      setClient(new ConvexReactClient(convexUrl));
-    }
-  }, []);
+  const isAuthenticated = !!user
 
-  // During SSR or before hydration, just render children without Convex
-  if (!client) {
-    return <>{children}</>;
-  }
+  const fetchAccessToken = useCallback(
+    async ({ forceRefreshToken }: { forceRefreshToken: boolean }) => {
+      if (!user) return null
+      try {
+        if (forceRefreshToken) {
+          return (await refresh()) ?? null
+        }
+        return (await getAccessToken()) ?? null
+      } catch {
+        return null
+      }
+    },
+    [user, refresh, getAccessToken],
+  )
 
-  return <ConvexProvider client={client}>{children}</ConvexProvider>;
+  return { isLoading, isAuthenticated, fetchAccessToken }
 }
 
+export function ConvexClientProvider({ children }: { children: ReactNode }) {
+  const [client] = useState(
+    () => new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string),
+  )
+
+  return (
+    <ConvexProviderWithAuth client={client} useAuth={useAuthFromAuthKit}>
+      {children}
+    </ConvexProviderWithAuth>
+  )
+}

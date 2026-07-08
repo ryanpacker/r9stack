@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useQuery, useMutation } from 'convex/react'
+import { useMutation, useQuery } from 'convex/react'
+import { useState } from 'react'
 import { api } from '../../../../convex/_generated/api'
 import { Button } from '../../../components/ui/button'
-import { useState } from 'react'
 
 export const Route = createFileRoute('/app/demo/convex/messages')({
   component: MessagesDemo,
@@ -59,6 +59,7 @@ function MessagesDemo() {
             >
               <p className="text-foreground">{message.text}</p>
               <p className="text-xs text-muted-foreground mt-2">
+                {message.author?.name ?? 'Unknown user'} ·{' '}
                 {new Date(message.createdAt).toLocaleString()}
               </p>
             </div>
@@ -68,4 +69,3 @@ function MessagesDemo() {
     </div>
   )
 }
-
