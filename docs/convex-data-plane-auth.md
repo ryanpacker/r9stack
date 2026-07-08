@@ -1,7 +1,10 @@
 # Convex Data-Plane Auth (r9stack templates)
 
-**Status (2026-07-08):** Phase 1 landed on `main` (stub-exposure fix + standard
-relabel + CI guard). Phase 2 (auth-template rebuild) is planned, not started.
+**Status (2026-07-08):** Phase 1 (stub-exposure fix + standard relabel + CI
+guard) and Phase 2 (auth-template rebuild) are both committed on branch
+`fix/convex-data-plane-secure-defaults` (PR #2), not yet merged to `main`. The
+only unfinished item is the live auth check — see
+[Phase 2 status](#phase-2--auth-template-rebuild-committed).
 
 This is the canonical reference. It supersedes the original handoff doc (which
 prompted this work and is preserved on branch `wip/convex-auth-backport-prerename`),
@@ -119,29 +122,50 @@ the internal generics, no authoring artifacts leak, convex is `^1.42.0`.
 should do a proper `tanstack template compile` -- and fix the ignore-list so
 `template*.json` stop leaking.
 
-## Phase 2 -- auth-template rebuild (planned, needs a live deployment)
+## Phase 2 -- auth-template rebuild (committed)
 
-The `auth` template does not authenticate a single request as shipped. Do not
-promote it to default until fixed and proven live. Verified defects:
-- `auth.config.ts` uses the OIDC `{ domain, applicationID: 'convex' }` form,
-  which cannot work: WorkOS serves no `.well-known/openid-configuration` (404),
-  and no WorkOS token carries `aud='convex'`.
-- the client bridge destructures `{ isLoaded }` from `useAuth()`, but the SDK
-  field is `loading` -- so Convex's "auth ready" signal is permanently wrong.
-- `forceRefreshToken` is ignored.
-- `users.getByWorkosId` takes a client `workosId` and returns that user without
-  comparing to `identity.subject` (IDOR); `auditLogReader.listRecent` lets any
-  authenticated user read all audit rows.
+As shipped, the `auth` template authenticated no requests and didn't even
+generate a building project. Defects found and fixed:
+- `auth.config.ts` used the OIDC `{ domain, applicationID: 'convex' }` form,
+  which cannot work (WorkOS serves no `.well-known/openid-configuration`, and no
+  token carries `aud='convex'`) -> now dual `customJwt`, and throws on a missing
+  `WORKOS_CLIENT_ID` instead of a silent placeholder.
+- the client bridge destructured `{ isLoaded }` but the SDK field is `loading`,
+  so Convex's "auth ready" signal was permanently wrong; and it ignored
+  `forceRefreshToken` -> rewritten to the canonical hook.
+- `src/start.ts` used the old `createStartHandler` API -> `createStart`.
+- `users.getByWorkosId` (public query taking a client `workosId`) -> `internalQuery`.
+- `auditLogReader.listRecent` kept as authed with a production-gating note
+  (hard-gating it would break the demo for non-RBAC users).
 
-Steps: adopt the dual `customJwt` config (throw, don't fall back to a placeholder
-clientId); fix the bridge and mount it in `InnerWrap`; add `convex/functions.ts`
-+ the ESLint ban + `convex function-spec` CI check; make `getByWorkosId` an
-`internalQuery` and gate `listRecent` on an admin permission; add
-`convex-helpers`, bump the SDK to `^0.11.0` + add `@workos-inc/node`; add the
-missing `template-info.json`; add the mandatory JWT-template README step; then
-**verify against a live dev deployment** (Ryan's personal Convex team, not
-BambooHR's -- see the scratch-project note) that a signed-in call yields a
-non-null `getUserIdentity()`.
+Enforcement added: `convex/functions.ts` (authedQuery/authedMutation/authedAction
++ publicQuery/publicMutation + requirePermission), all modules migrated onto it,
+and an ESLint ban on the raw builders (functions.ts is the sole exemption).
+Config/deps: `convex.json` zero-config authKit block; SDK `^0.11.0` (0.8.2–0.9.x
+carry an IDOR); added `@workos-inc/node ^10.7.0`, `convex-helpers ^0.1.120`,
+`convex ^1.42.0`, Node `>=22.11`; created the missing `template-info.json`; README
+now documents the mandatory JWT-template `aud` + profile-claims step. auth 2.0.0.
+
+Also fixed template/base drift that broke generation for BOTH templates under the
+current `@tanstack/cli` base: `vite-tsconfig-paths` missing from packageAdditions,
+deprecated `baseUrl` in tsconfig, removed devtools `triggerImage` prop, and auth's
+`template.json` lacked the required `deletedFiles` field.
+
+**Verified:** both templates generate via `@tanstack/cli create`; the generated
+auth project typechecks and builds clean; the generated standard project builds
+clean (its 5 tsc errors are pre-existing iron-session legacy); the ESLint ban
+fires on a raw-builder import.
+
+**NOT verified (needs Ryan) -- the one open item:** a real signed-in token
+resolving to a non-null `getUserIdentity()` against a live deployment. This is
+blocked on two things only Ryan can do: (1) `npx convex login` on the **personal**
+Convex team (the machine's token is the BambooHR account; per policy we don't
+create scratch deployments there), and (2) the dashboard-only WorkOS Sessions
+JWT-template `aud` step. Once logged in, `npx convex dev` on the auth template
+regenerates `_generated` for real, and the curl matrix below can be run. The
+negative/security cases are deterministic from the code + were proven live in
+Phase 1 (the internal-function-not-found mechanism); only the positive path is
+unproven.
 
 ## Verification method (unauthenticated-curl checks)
 
