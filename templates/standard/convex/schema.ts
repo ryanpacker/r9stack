@@ -2,7 +2,9 @@ import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
 
 export default defineSchema({
-  // Demo messages table
+  // Public guestbook demo table — unauthenticated, do not store real data.
+  // See convex/messages.ts for why, and the `auth` template for the secure
+  // per-user pattern.
   messages: defineTable({
     text: v.string(),
     createdAt: v.number(),

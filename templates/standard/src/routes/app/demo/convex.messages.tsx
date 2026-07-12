@@ -23,11 +23,17 @@ function MessagesDemo() {
 
   return (
     <div className="p-8 max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-2">Convex Messages Demo</h1>
-      <p className="text-muted-foreground mb-8">
+      <h1 className="text-3xl font-bold mb-2">Convex Public Guestbook Demo</h1>
+      <p className="text-muted-foreground mb-4">
         Real-time message board powered by Convex. Open this page in two tabs to
         see messages sync instantly!
       </p>
+      <div className="mb-8 rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-sm text-amber-700 dark:text-amber-300">
+        <strong>Demo only — this data is public.</strong> These Convex functions
+        are unauthenticated, so anyone with the deployment URL can read and write
+        this table. The app login wall does not protect it. For real features,
+        authenticate your Convex functions (see the <code>auth</code> template).
+      </div>
 
       {/* Message Input Form */}
       <form onSubmit={handleSubmit} className="flex gap-3 mb-8">

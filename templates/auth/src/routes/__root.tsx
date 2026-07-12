@@ -63,7 +63,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <TanStackDevtools
           config={{
             position: 'bottom-right',
-            triggerImage: '/images/r9stack-icon-circle.png',
+            hideUntilHover: true,
+            openHotkey: [],
           }}
           plugins={[
             {

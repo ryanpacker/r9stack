@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm run build
+      # Fails if any template's committed convex/_generated/server.js aliases
+      # internal builders to the public generics (would expose internal
+      # functions on the public API). See tests/guard-generated-server.mjs.
+      - run: npm test

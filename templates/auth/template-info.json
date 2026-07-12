@@ -1,8 +1,8 @@
 {
-  "id": "r9-template-standard",
-  "name": "r9stack Standard",
-  "version": "1.2.0",
-  "description": "Full-featured template with TanStack Start, Convex, WorkOS authentication, and shadcn/ui",
+  "id": "r9-template-auth",
+  "name": "r9stack Auth",
+  "version": "2.0.0",
+  "description": "Full auth template with Convex-level authentication, WorkOS RBAC, and API access patterns",
   "author": "r9stack <hello@r9stack.dev>",
   "license": "Apache-2.0",
   "link": "https://github.com/ryanpacker/r9stack",
@@ -15,9 +15,10 @@
   "packageAdditions": {
     "dependencies": {
       "@fontsource-variable/inter": "^5.2.8",
-      "@workos-inc/node": "^7.79.3",
+      "@workos-inc/node": "^10.7.0",
+      "@workos/authkit-tanstack-react-start": "^0.11.0",
       "convex": "^1.42.0",
-      "iron-session": "^8.0.4",
+      "convex-helpers": "^0.1.120",
       "radix-ui": "^1.4.3",
       "shadcn": "^3.6.2",
       "vite-tsconfig-paths": "^6.0.2"

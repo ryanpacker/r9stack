@@ -13,6 +13,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
+    "test": "node tests/guard-generated-server.mjs",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
